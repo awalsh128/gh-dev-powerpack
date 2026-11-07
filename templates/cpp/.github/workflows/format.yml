@@ -15,16 +15,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      # Fails when any C/C++ file differs from .clang-format. Fix locally with:
-      #   git ls-files -z '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hpp' | xargs -0 clang-format -i
+      # Fails when any C/C++ file differs from .clang-format and lists the files in the job summary.
+      # Use the same major version locally (pip install "clang-format==22.*") so results match.
       - name: Check formatting
-        shell: bash
-        run: |
-          set -euo pipefail
-          clang-format --version
-          if ! git ls-files -z '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hpp' | grep -qz .; then
-            echo "No C/C++ files found."
-            exit 0
-          fi
-          git ls-files -z '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hpp' \
-            | xargs -0 clang-format --style=file --dry-run --Werror
+        uses: jidicula/clang-format-action@654a770daa28443dd111d133e4083e21c1075674 # v4.18.0
+        with:
+          clang-format-version: "22"

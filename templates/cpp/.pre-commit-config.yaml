@@ -1,5 +1,6 @@
 # Install with scripts/install_pre_commit.sh, then run: pre-commit run --all-files
-# clang-format and clang-tidy come from the system so their versions match CI.
+# clang-format and clang-tidy come from the system. Use clang-format 22 to match the CI check
+# (pip install "clang-format==22.*").
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

@@ -1,12 +1,18 @@
 name: Sync Labels
 
-# Creates and updates labels from .github/labels.yaml. Never deletes labels.
+# Creates and updates labels from .github/labels.yaml. Never deletes labels (skip-delete).
+# On pull requests that change the file it only does a dry run, so the log shows what would change.
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
       - ".github/labels.yaml"
+      - ".github/workflows/sync-labels.yml"
+  pull_request:
+    paths:
+      - ".github/labels.yaml"
+      - ".github/workflows/sync-labels.yml"
 
 permissions:
   contents: read
@@ -21,19 +27,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      # yq and gh are preinstalled on GitHub-hosted Ubuntu runners.
       - name: Sync labels
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          yq -o=json '.labels' .github/labels.yaml | jq -c '.[]' | while read -r label; do
-            name="$(jq -r '.name' <<<"$label")"
-            color="$(jq -r '.color | ltrimstr("#")' <<<"$label")"
-            description="$(jq -r '.description // ""' <<<"$label")"
-            # --force updates the color and description when the label already exists.
-            gh label create "$name" --color "$color" --description "$description" --force
-            echo "Synced: $name"
-          done
+        uses: crazy-max/ghaction-github-labeler@548a7c3603594ec17c819e1239f281a3b801ab4d # v6.0.0
+        with:
+          yaml-file: .github/labels.yaml
+          skip-delete: true
+          dry-run: ${{ github.event_name == 'pull_request' }}
