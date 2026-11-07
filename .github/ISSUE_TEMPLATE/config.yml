@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/awalsh128/gh-dev-powerpack#readme
+    about: Read the usage docs before opening an issue.
+  - name: Contribution guide
+    url: https://github.com/awalsh128/gh-dev-powerpack/blob/main/CONTRIBUTING.md
+    about: Contribution expectations, coding standards, and workflow.
+  - name: Questions and support
+    url: https://github.com/awalsh128/gh-dev-powerpack/discussions
+    about: Ask questions in Discussions instead of opening a bug report.

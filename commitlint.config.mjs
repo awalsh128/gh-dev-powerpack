@@ -1,0 +1,18 @@
+/**
+ * Enforces Conventional Commits so semantic-release can pick the version bump
+ * from each commit's type (feat: minor, fix and perf: patch, `!` or a
+ * BREAKING CHANGE footer: major).
+ *
+ * Local hook requires: npm i -D @commitlint/cli @commitlint/config-conventional husky
+ * CI (wagoid/commitlint-github-action) only reads an ES module config, hence .mjs.
+ *
+ * @type {import('@commitlint/types').UserConfig}
+ */
+export default {
+  extends: ["@commitlint/config-conventional"],
+  rules: {
+    // semantic-release's release commits embed release notes with long links.
+    "body-max-line-length": [0],
+    "footer-max-line-length": [0],
+  },
+};
