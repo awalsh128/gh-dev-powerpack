@@ -1,0 +1,25 @@
+# Install with scripts/install_pre_commit.sh, then run: pre-commit run --all-files
+# clang-format and clang-tidy come from the system so their versions match CI.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+
+  - repo: local
+    hooks:
+      - id: clang-format
+        name: clang-format
+        entry: clang-format -i --style=file
+        language: system
+        types_or: [c, c++]
+      - id: clang-tidy
+        name: clang-tidy
+        # Needs build/compile_commands.json (cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build).
+        entry: clang-tidy -p build
+        language: system
+        types_or: [c, c++]
+        exclude: \.h(pp)?$

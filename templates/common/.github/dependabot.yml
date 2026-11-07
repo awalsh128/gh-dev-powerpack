@@ -1,0 +1,26 @@
+# Keeps pinned action SHAs current, with Conventional Commits messages so they pass commitlint.
+# Uncomment and adjust the second block for the project's package ecosystem
+# (npm, pip, gomod, cargo, nuget, maven, gradle, docker, ...).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # - package-ecosystem: npm
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #   # 0 = security updates only; raise it to also get version updates.
+  #   open-pull-requests-limit: 0
+  #   commit-message:
+  #     # Runtime dependency fixes ship as a patch release; dev dependency fixes don't release.
+  #     prefix: fix
+  #     prefix-development: chore
+  #     include: scope

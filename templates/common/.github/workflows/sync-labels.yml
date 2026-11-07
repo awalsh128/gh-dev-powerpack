@@ -1,0 +1,39 @@
+name: Sync Labels
+
+# Creates and updates labels from .github/labels.yaml. Never deletes labels.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/labels.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # yq and gh are preinstalled on GitHub-hosted Ubuntu runners.
+      - name: Sync labels
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          yq -o=json '.labels' .github/labels.yaml | jq -c '.[]' | while read -r label; do
+            name="$(jq -r '.name' <<<"$label")"
+            color="$(jq -r '.color | ltrimstr("#")' <<<"$label")"
+            description="$(jq -r '.description // ""' <<<"$label")"
+            # --force updates the color and description when the label already exists.
+            gh label create "$name" --color "$color" --description "$description" --force
+            echo "Synced: $name"
+          done

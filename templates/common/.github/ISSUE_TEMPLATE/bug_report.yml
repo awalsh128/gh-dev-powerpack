@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a problem with __REPO__
+labels: [bug]
+assignees: [__MAINTAINER__]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [README](https://github.com/__OWNER__/__REPO__#readme) and existing issues first.
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened?
+      description: Include the full error text or stack trace.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: The smallest code, config, or command sequence that shows the problem.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Version, tag, or commit SHA you are using.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS and version, runtime/toolchain versions, install method.
+      placeholder: |
+        OS: Ubuntu 24.04
+        Runtime: ...
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Logs, CI links, recent upgrades, anything else that helps.

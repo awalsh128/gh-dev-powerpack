@@ -1,0 +1,37 @@
+name: Commit Lint
+
+# The commit-msg hook can be skipped locally, so check every PR commit and the PR title too.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      # Works without a package.json; uses the repo's commitlint.config.js when present.
+      - name: Install commitlint
+        shell: bash
+        run: npm install --no-save @commitlint/cli @commitlint/config-conventional
+
+      - name: Lint commit messages
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: npx commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+
+      # Squash merges use the PR title as the commit message.
+      - name: Lint PR title
+        shell: bash
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$TITLE" | npx commitlint --verbose

@@ -1,0 +1,30 @@
+name: Format Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # Fails when any C/C++ file differs from .clang-format. Fix locally with:
+      #   git ls-files -z '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hpp' | xargs -0 clang-format -i
+      - name: Check formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang-format --version
+          if ! git ls-files -z '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hpp' | grep -qz .; then
+            echo "No C/C++ files found."
+            exit 0
+          fi
+          git ls-files -z '*.c' '*.cc' '*.cpp' '*.cxx' '*.h' '*.hpp' \
+            | xargs -0 clang-format --style=file --dry-run --Werror
