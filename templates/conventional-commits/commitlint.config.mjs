@@ -3,7 +3,8 @@
  * from each commit's type (feat: minor, fix and perf: patch, `!` or a
  * BREAKING CHANGE footer: major).
  *
- * Requires: npm i -D @commitlint/cli @commitlint/config-conventional husky
+ * Local hook requires: npm i -D @commitlint/cli @commitlint/config-conventional husky
+ * CI (wagoid/commitlint-github-action) only reads an ES module config, hence .mjs.
  *
  * @type {import('@commitlint/types').UserConfig}
  */

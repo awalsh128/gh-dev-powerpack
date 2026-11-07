@@ -21,11 +21,11 @@ remote. Override them with `OWNER=`, `REPO=` and `MAINTAINER=`.
 
 | Set | What it adds |
 | --- | --- |
-| `common` | `.editorconfig`, issue forms (bug, feature, contact links), PR template, Dependabot for pinned actions, `labels.yaml` with a Sync Labels workflow, Issue Triage workflow (assign maintainer, label untemplated issues), CodeQL workflow, `require-ci-success` composite action |
-| `conventional-commits` | `commitlint.config.js`, husky `commit-msg` hook, Commit Lint workflow that checks every PR commit and the PR title |
+| `common` | `.editorconfig`, issue forms (bug, feature, contact links), PR template, Dependabot for pinned actions, `labels.yaml` with a Sync Labels workflow (crazy-max/ghaction-github-labeler; dry run on PRs, never deletes), Issue Triage workflow (assign maintainer, label untemplated issues), CodeQL workflow, `require-ci-success` composite action |
+| `conventional-commits` | `commitlint.config.mjs`, husky `commit-msg` hook, Commit Lint workflow that checks every PR commit (wagoid/commitlint-github-action) and the PR title (amannn/action-semantic-pull-request) |
 | `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus branch rulesets for `main` and `staging` |
 | `node` | Dev container for Node 24 and a Codecov config |
-| `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow that fails on unformatted files |
+| `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
 
 After bootstrapping, edit:
@@ -49,3 +49,7 @@ These were made generic from awalsh128/ts-apt (release flow, PR and Dependabot c
 actions), awalsh128/vscode-keep-sorted (labels, issue forms, triage), awalsh128/fluentcpp (C++
 formatting and linting) and awalsh128/PcapngFile (.NET `.editorconfig`). Actions are pinned to
 commit SHAs.
+
+Workflows use published actions where a maintained one exists, so templates carry little
+hand-written script. The remaining shell steps (issue triage, `require-ci-success`, promote) are
+short `gh` and `git` calls with no good published equivalent.
