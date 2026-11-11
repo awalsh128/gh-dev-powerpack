@@ -5,7 +5,8 @@
 # Usage: bootstrap.sh [-f] [-n] <target-dir> <set> [set ...]
 #   -f  Overwrite files that already exist in the target.
 #   -n  Dry run: print what would be copied.
-# Sets: see templates/ (common, conventional-commits, release-flow, node, cpp, dotnet).
+# Sets: see templates/ (common, conventional-commits, release-flow, node, npm-publish, npm-pages,
+# vscode-extension, cpp, dotnet).
 #
 # Placeholders: __OWNER__, __REPO__ (from the target's origin remote) and __MAINTAINER__
 # (defaults to the owner). Override with OWNER=, REPO= and MAINTAINER= in the environment.
@@ -18,12 +19,12 @@ while getopts "fnh" opt; do
   case "$opt" in
     f) force=true ;;
     n) dry_run=true ;;
-    *) sed -n '2,12p' "$0"; exit 1 ;;
+    *) sed -n '2,13p' "$0"; exit 1 ;;
   esac
 done
 shift $((OPTIND - 1))
 if [[ $# -lt 2 ]]; then
-  sed -n '2,12p' "$0"
+  sed -n '2,13p' "$0"
   echo "Available sets: $(ls "$here/templates" | tr '\n' ' ')"
   exit 1
 fi
