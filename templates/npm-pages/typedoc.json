@@ -1,0 +1,13 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs/api",
+  "exclude": ["scripts/**/*", "test/**/*"],
+  "tsconfig": "tsconfig.json",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "includeVersion": true,
+  "sort": ["source-order"],
+  "gitRevision": "{branch}"
+}
