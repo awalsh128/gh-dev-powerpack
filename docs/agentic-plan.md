@@ -151,8 +151,7 @@ Two more tasks (`7725fee`, `e3c6851`) were set up, but the run was stopped to sa
 - To measure them, use changes big enough that a review pass or delegated search could matter
   (several files, an unfamiliar area), and run each condition at least three times.
 
-The harness (setup, run, score and analyze scripts) was kept in the session scratchpad, not in
-this repo.
+The harness is in [`scripts/agentic-eval/`](../scripts/agentic-eval/README.md).
 
 ## Future: unattended (AFK) orchestration
 

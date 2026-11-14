@@ -44,6 +44,7 @@ After bootstrapping, edit:
 | `scripts/gh_auth.sh` | Log in with `gh`, make git use it for credentials, and export `GITHUB_TOKEN` (source it) |
 | `scripts/install_pre_commit.sh` | Install pre-commit and the repo's hooks |
 | `scripts/apply_rulesets.sh` | Create or update branch rulesets from JSON; `-a <app-id>` lets a release-bot app bypass `main` |
+| `scripts/agentic-eval/` | Replays past fixes with and without the `agentic` set in Claude Code headless, and scores them against the fixes' own tests. See its [README](scripts/agentic-eval/README.md) |
 
 ## Sources
 
