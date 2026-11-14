@@ -1,6 +1,7 @@
 # Plan: model-agnostic agentic configuration template
 
-Status: phases 0 to 3 done 2026-11-13 (sources, principles doc, template skeleton, roles).
+Status: phases 0 to 4 done 2026-11-14 (sources, principles doc, template skeleton, roles,
+skills).
 
 ## Goal
 
@@ -57,7 +58,6 @@ Effects on the design:
 templates/agentic/
   AGENTS.md                      # hand-written skeleton: commands, conventions, warnings (~60-line budget)
   CLAUDE.md                      # "@AGENTS.md"
-  docs/agents/orchestration.md   # loaded on demand: when to delegate, roles, brief, review loop
   rulesync.jsonc                 # subagents only, 4 targets
   .claude/skills -> ../.agents/skills
   .github/skills -> ../.agents/skills
@@ -69,8 +69,10 @@ templates/agentic/
       reviewer.md                # fresh context; reviews diff vs spec and repo standards
       verifier.md                # runs targeted tests/lint; reports pass/fail + minimal output
   .agents/skills/
-    handoff/SKILL.md             # how to brief a subagent (goal, constraints, decisions, output shape)
-    progress-notes/SKILL.md      # structured notes file for long tasks
+    delegate/SKILL.md            # when to delegate, roles, the brief, using results, review loop
+    delegate/references/example-briefs.md
+    progress-notes/SKILL.md      # notes file for long tasks; "Next:" line in commits
+  .agents/notes/.gitignore       # notes are local working state
   .gemini/settings.json          # context.fileName -> AGENTS.md
   .github/workflows/agent-config.yml   # rulesync generate --check
   .out-of-scope/                 # one file per rejected idea with the reason, so agents don't re-propose it
@@ -97,7 +99,10 @@ Role conventions:
    line prompt and a tagged output block, plus `.rulesync/TIERS.md`. Antigravity tool names
    (`view_file`, `grep_search`, `run_command`) come from the examples in its docs; a misspelled
    name can hang the agent, so check them in phase 6.
-4. **Skills**: `handoff` and `progress-notes`, checked with `skills-ref validate`.
+4. ~~Skills~~ (done): `delegate` (which absorbed the planned `handoff` skill and
+   `docs/agents/orchestration.md`, so delegation guidance loads through skill discovery in every
+   tool) and `progress-notes`. Checked against the spec's name and description rules with a
+   script. `skills-ref validate` hasn't been run yet; add it to CI in phase 5.
 5. **CI**: an `agent-config.yml` workflow that runs `rulesync generate --check`. Decide whether to
    commit generated files (needed so tools work without running rulesync) or to generate them in
    a hook.

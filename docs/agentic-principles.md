@@ -28,10 +28,10 @@ Skills do this in three stages: only `name` and `description` (about 100 tokens)
 the body loads when the skill is used, and files in `references/` load only when read
 ([spec](https://agentskills.io/specification)).
 
-**In the template:** procedures (how to release, how to hand off, how to keep notes) are skills, not
-sections of `AGENTS.md`. A `SKILL.md` stays under 500 lines, with detail moved to `references/` one
-level deep. Rules that only some tasks need, such as orchestration, are separate files that the
-root file points to.
+**In the template:** procedures (delegating, keeping notes, releasing) are skills, not sections of
+`AGENTS.md`. A `SKILL.md` stays under 500 lines, with detail moved to `references/` one level deep.
+Background that only some tasks need goes in `docs/agents/<topic>.md`, linked from the root file
+with the situation it applies to.
 
 ## 3. Use subagents to isolate context, not to model an org chart
 
@@ -69,8 +69,8 @@ MCP servers or change the sandbox
 A subagent that gets only a one-line task fills the gaps with its own assumptions
 ([Cognition](https://cognition.ai/blog/dont-build-multi-agents)).
 
-**In the template:** every delegation uses the `handoff` skill's brief: goal, constraints,
-decisions already made, what's out of scope, and the output shape expected back.
+**In the template:** every delegation uses the `delegate` skill's brief: goal, context pasted
+in, decisions already made and what's out of scope, and any change to the expected output.
 
 ## 6. Add structure only when it pays
 

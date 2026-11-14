@@ -21,8 +21,8 @@ Put task-specific detail in docs/agents/ and link it below. Delete this comment.
 
 ## Subagents
 
-You are the only agent that edits files. Subagents only read and report. Before delegating, read
-[docs/agents/orchestration.md](docs/agents/orchestration.md).
+You are the only agent that edits files. Subagents only read and report. Use the `delegate` skill
+before starting one, and the `progress-notes` skill for work that spans sessions.
 
 ## More context
 
