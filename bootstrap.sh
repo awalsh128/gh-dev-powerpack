@@ -5,7 +5,8 @@
 # Usage: bootstrap.sh [-f] [-n] <target-dir> <set> [set ...]
 #   -f  Overwrite files that already exist in the target.
 #   -n  Dry run: print what would be copied.
-# Sets: see templates/ (common, conventional-commits, release-flow, node, cpp, dotnet).
+# Sets: see templates/ (common, conventional-commits, release-flow, node, cpp, dotnet, agentic).
+# Symlinks in a set are recreated as symlinks.
 #
 # Placeholders: __OWNER__, __REPO__ (from the target's origin remote) and __MAINTAINER__
 # (defaults to the owner). Override with OWNER=, REPO= and MAINTAINER= in the environment.
@@ -18,12 +19,12 @@ while getopts "fnh" opt; do
   case "$opt" in
     f) force=true ;;
     n) dry_run=true ;;
-    *) sed -n '2,12p' "$0"; exit 1 ;;
+    *) sed -n '2,13p' "$0"; exit 1 ;;
   esac
 done
 shift $((OPTIND - 1))
 if [[ $# -lt 2 ]]; then
-  sed -n '2,12p' "$0"
+  sed -n '2,13p' "$0"
   echo "Available sets: $(ls "$here/templates" | tr '\n' ' ')"
   exit 1
 fi
@@ -52,17 +53,26 @@ for set in "$@"; do
   while IFS= read -r -d '' file; do
     rel="${file#"$src"/}"
     dest="$target/$rel"
-    if [[ -e "$dest" && "$force" == false ]]; then
+    if [[ (-e "$dest" || -L "$dest") && "$force" == false ]]; then
       echo "  skip   $rel (exists)"
+      continue
+    fi
+    # Never replace a real directory with a symlink, even with -f.
+    if [[ -L "$file" && -d "$dest" && ! -L "$dest" ]]; then
+      echo "  skip   $rel (is a directory)"
       continue
     fi
     echo "  write  $rel ($set)"
     "$dry_run" && continue
     mkdir -p "$(dirname "$dest")"
+    if [[ -L "$file" ]]; then
+      ln -sfn "$(readlink "$file")" "$dest"
+      continue
+    fi
     sed -e "s#__OWNER__#$OWNER#g" -e "s#__REPO__#$REPO#g" -e "s#__MAINTAINER__#$MAINTAINER#g" \
       "$file" > "$dest"
     if [[ -x "$file" ]]; then chmod +x "$dest"; fi
-  done < <(find "$src" -type f -print0 | sort -z)
+  done < <(find "$src" \( -type f -o -type l \) -print0 | sort -z)
 done
 
 "$dry_run" || echo "Done. Review the changes with: git -C '$target' status"
