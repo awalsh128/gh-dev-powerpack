@@ -1,0 +1,75 @@
+name: Agentic Template
+
+# Keeps templates/agentic consistent: the generated subagent files must match .rulesync/, and a
+# bootstrapped repo must get the skill symlinks and valid skills. Fix a generate failure with:
+#   cd templates/agentic && npx -y rulesync@<RULESYNC_VERSION> generate
+on:
+  pull_request:
+    paths:
+      - templates/agentic/**
+      - bootstrap.sh
+      - .github/workflows/agentic-template.yml
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # The template's own workflow is the single place these versions are pinned.
+      - name: Read tool pins from the template workflow
+        run: |
+          workflow=templates/agentic/.github/workflows/agent-config.yml
+          for key in RULESYNC_VERSION SKILLS_REF; do
+            value="$(sed -n "s/^  $key: //p" "$workflow")"
+            if [[ -z "$value" ]]; then
+              echo "::error file=$workflow::$key not found"
+              exit 1
+            fi
+            echo "$key=$value" >>"$GITHUB_ENV"
+          done
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+
+      - name: Check generated subagents are up to date
+        working-directory: templates/agentic
+        run: npx -y "rulesync@$RULESYNC_VERSION" generate --check
+
+      - name: Bootstrap into a new repo
+        run: |
+          target="$RUNNER_TEMP/target"
+          git init -q "$target"
+          git -C "$target" remote add origin https://github.com/example/target.git
+          ./bootstrap.sh "$target" agentic
+          echo "TARGET=$target" >>"$GITHUB_ENV"
+
+      - name: Check skill symlinks survived bootstrap
+        working-directory: ${{ env.TARGET }}
+        run: |
+          for link in .claude/skills .github/skills; do
+            if [[ "$(readlink "$link")" != "../.agents/skills" ]]; then
+              echo "::error::$link must be a symlink to ../.agents/skills after bootstrap"
+              exit 1
+            fi
+          done
+
+      - name: Validate skills
+        working-directory: ${{ env.TARGET }}
+        run: |
+          status=0
+          for skill in .agents/skills/*/; do
+            uvx --from "$SKILLS_REF" skills-ref validate "$skill" || status=1
+          done
+          exit "$status"

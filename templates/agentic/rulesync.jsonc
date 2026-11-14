@@ -1,0 +1,14 @@
+// Generates each tool's subagent files from .rulesync/subagents/*.md. Edit the sources, then run
+// `npx -y rulesync@43.4.1 generate` and commit the output. The Agent Config workflow runs the
+// same version with --check; keep the two in step.
+//
+// Only subagents come from rulesync. AGENTS.md is written by hand, and every tool reads it
+// directly (CLAUDE.md imports it). Skills live in .agents/skills/, which Codex, Gemini and
+// Antigravity read, with .claude/skills and .github/skills symlinked to it.
+{
+  "$schema": "https://github.com/dyoshikawa/rulesync/releases/latest/download/config-schema.json",
+  "targets": ["claudecode", "codexcli", "copilot", "antigravity-cli"],
+  "features": ["subagents"],
+  // Remove generated subagents whose source was deleted.
+  "delete": true
+}

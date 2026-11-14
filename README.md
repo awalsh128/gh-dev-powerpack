@@ -30,6 +30,7 @@ remote. Override them with `OWNER=`, `REPO=` and `MAINTAINER=`.
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing; needs `node` |
 | `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
+| `agentic` | Coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity from one source: a short `AGENTS.md` skeleton, five read-only subagent roles generated with rulesync, `delegate` and `progress-notes` skills shared through symlinks, and an Agent Config check workflow. See [Agentic Configuration](docs/agentic-config.md) |
 
 After bootstrapping, edit:
 
@@ -37,6 +38,7 @@ After bootstrapping, edit:
 - `dependabot.yml`: uncomment the package ecosystem block.
 - `labels.yaml`: add project-specific labels.
 - `rulesets/staging.json`: the required status check names must match your CI job names.
+- `AGENTS.md`: replace the `TODO`s with the repo's commands, conventions and warnings.
 
 ## Publishing guides
 
@@ -56,6 +58,7 @@ After bootstrapping, edit:
 | `scripts/gh_auth.sh` | Log in with `gh`, make git use it for credentials, and export `GITHUB_TOKEN` (source it) |
 | `scripts/install_pre_commit.sh` | Install pre-commit and the repo's hooks |
 | `scripts/apply_rulesets.sh` | Create or update branch rulesets from JSON; `-a <app-id>` lets a release-bot app bypass `main` |
+| `scripts/agentic-eval/` | Replays past fixes with and without the `agentic` set in Claude Code headless, and scores them against the fixes' own tests. See its [README](scripts/agentic-eval/README.md) |
 | `scripts/setup_npm_publish.sh` | Publish a placeholder npm package (public and deprecated, or private with `-p`) and register its trusted publisher with `npm trust`; prints the npmjs.com steps |
 | `scripts/setup_github_pages.sh` | Turn on Pages with GitHub Actions as the source, let `main` deploy to the `github-pages` environment, and set the repository website |
 | `scripts/setup_vscode_extension_publish.sh` | Create the Open VSX namespace and publish a placeholder version; prints the Marketplace and Open VSX trusted publishing steps with your values |
