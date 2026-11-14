@@ -1,5 +1,6 @@
 // Generates each tool's subagent files from .rulesync/subagents/*.md. Edit the sources, then run
-// `npx rulesync generate`; CI runs `npx rulesync generate --check`.
+// `npx -y rulesync@43.4.1 generate` and commit the output. The Agent Config workflow runs the
+// same version with --check; keep the two in step.
 //
 // Only subagents come from rulesync. AGENTS.md is written by hand, and every tool reads it
 // directly (CLAUDE.md imports it). Skills live in .agents/skills/, which Codex, Gemini and
