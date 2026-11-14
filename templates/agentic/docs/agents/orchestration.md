@@ -32,7 +32,8 @@ A subagent sees none of this conversation. Every brief has:
 2. **Known context**: paste what it needs that you already have, such as the diff, the issue or
    the file paths. Don't make it rediscover them.
 3. **Decisions already made**, and what is out of scope.
-4. **Output**: the shape and length you want back.
+4. **Output**: each role ends its reply with a tagged block (`<findings>`, `<plan>`,
+   `<review>` or `<result>`). Ask for something different only when you need it.
 
 ## Review loop
 

@@ -1,6 +1,6 @@
 # Plan: model-agnostic agentic configuration template
 
-Status: phases 0 to 2 done 2026-11-13 (sources, principles doc, template skeleton).
+Status: phases 0 to 3 done 2026-11-13 (sources, principles doc, template skeleton, roles).
 
 ## Goal
 
@@ -93,7 +93,10 @@ Role conventions:
 1. ~~`docs/agentic-principles.md`~~ (done).
 2. ~~Template skeleton~~ (done). rulesync itself hasn't been run against the config yet; that
    happens in phase 5.
-3. **Role library**: the five roles, with per-tool blocks and the tier table.
+3. ~~Role library~~ (done): five read-only roles in `.rulesync/subagents/`, each with a 20–33
+   line prompt and a tagged output block, plus `.rulesync/TIERS.md`. Antigravity tool names
+   (`view_file`, `grep_search`, `run_command`) come from the examples in its docs; a misspelled
+   name can hang the agent, so check them in phase 6.
 4. **Skills**: `handoff` and `progress-notes`, checked with `skills-ref validate`.
 5. **CI**: an `agent-config.yml` workflow that runs `rulesync generate --check`. Decide whether to
    commit generated files (needed so tools work without running rulesync) or to generate them in
