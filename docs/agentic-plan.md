@@ -1,7 +1,7 @@
 # Plan: model-agnostic agentic configuration template
 
-Status: phases 0 to 5 done 2026-11-14 (sources, principles doc, template skeleton, roles,
-skills, CI).
+Status: phases 0 to 6 done 2026-11-14 (sources, principles doc, template skeleton, roles,
+skills, CI, first evaluation) and phase 7 (README and guide) done.
 
 ## Goal
 
@@ -99,7 +99,7 @@ Role conventions:
 3. ~~Role library~~ (done): five read-only roles in `.rulesync/subagents/`, each with a 20–33
    line prompt and a tagged output block, plus `.rulesync/TIERS.md`. Antigravity tool names
    (`view_file`, `grep_search`, `run_command`) come from the examples in its docs; a misspelled
-   name can hang the agent, so check them in phase 6.
+   name can hang the agent. Still unchecked: Antigravity isn't installed here.
 4. ~~Skills~~ (done): `delegate` (which absorbed the planned `handoff` skill and
    `docs/agents/orchestration.md`, so delegation guidance loads through skill discovery in every
    tool) and `progress-notes`. Checked against the spec's name and description rules with a
@@ -114,11 +114,45 @@ Role conventions:
    - Follow-up: this repo has no CI of its own, so the generated files in `templates/agentic/` can
      drift from `.rulesync/`. Regenerate after editing roles (`cd templates/agentic && npx -y
      rulesync@43.4.1 generate`), or add a repo-level workflow for it.
-6. **Evaluate**: bootstrap this repo and one real project. Compare baseline context with
-   `/context` (or the tool's equivalent), run the same 3–5 tasks with and without the set, then
-   trim whatever doesn't help.
-7. **Wire up**: README template-set table, `docs/agentic-config.md` guide, and how to run
-   bootstrap.
+6. ~~Evaluate~~ (partly done, 2026-11-14). See [Evaluation](#evaluation-2026-11-14) below.
+7. ~~Wire up~~ (done): README template-set row and after-bootstrap step, plus the
+   [Agentic Configuration](agentic-config.md) guide.
+
+## Evaluation (2026-11-14)
+
+**Fixed cost:** the set adds about 640 tokens to every session (`AGENTS.md` skeleton about 260,
+skill descriptions about 130, role descriptions about 250; estimated at 4 characters per token).
+Skill bodies (330–550 tokens) and role prompts (160–310) load only when used.
+
+**Method:** replay past ts-apt fixes. Each task starts from a clone at the fix commit's parent,
+with a prompt written as a bug report or feature request. Scoring overlays the commit's own tests,
+which the agent never saw, then runs them, the unit suite and `tsc`. Every hidden test was checked
+to fail before the fix and pass after it. Both conditions use ts-apt's current `AGENTS.md`; "set"
+adds the agentic set and its Subagents section. Runs used Claude Code 2.1.325 headless:
+`--model sonnet --effort medium --setting-sources project --strict-mcp-config`, a shell
+allowlist, and a $5 cap. One run per task and condition.
+
+| Task (commit) | Condition | Hidden tests | Unit suite | Cost | Turns | Input tokens | Subagents / skills |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Parser `Inst` lines (`5f22584`) | baseline | pass | pass | $0.19 | 12 | 233k | none |
+| | set | pass | pass | $0.19 | 12 | 238k | none |
+| Simulate-mode leak (`cb068c5`) | baseline | pass | pass | $0.11 | 10 | 137k | none |
+| | set | pass | pass | $0.15 | 10 | 218k | none |
+
+Two more tasks (`7725fee`, `e3c6851`) were set up, but the run was stopped to save usage.
+
+**Findings:**
+
+- On small fixes the set neither helps nor hurts. Both conditions passed, with similar cost and
+  turns. The extra input tokens on the second task fall within single-run noise.
+- The main agent never delegated or loaded a skill. That matches the `delegate` skill's guidance
+  for work that takes a few tool calls, but it means the roles, the review loop and progress notes
+  are still unmeasured.
+- To measure them, use changes big enough that a review pass or delegated search could matter
+  (several files, an unfamiliar area), and run each condition at least three times.
+
+The harness (setup, run, score and analyze scripts) was kept in the session scratchpad, not in
+this repo.
 
 ## Future: unattended (AFK) orchestration
 
@@ -136,8 +170,10 @@ out of v1.
 ## Open questions
 
 - VS Code reads both `.claude/agents/` and `.github/agents/`, so Copilot in VS Code may list each
-  role twice. Check in phase 6, and if it does, drop the `copilot` target and rely on
+  role twice. Not checked yet. If it does, drop the `copilot` target and rely on
   `.claude/agents/`.
+- Antigravity tool names (`view_file`, `grep_search`, `run_command`) need checking on a machine
+  that has Antigravity.
 - Symlinks on Windows need `core.symlinks=true` (and Developer Mode). Document it in the guide.
 
 - Confirm that Copilot reads root `AGENTS.md`. The VS Code agent reference page doesn't say.
