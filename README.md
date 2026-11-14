@@ -1,6 +1,10 @@
-# gh-dev-powerpack
+<p align="center">
+  <img src="docs/assets/logo.svg" alt="gh-dev-powerpack logo" width="128" height="128">
+</p>
 
-Powerpack for developing code and managing CI/CD. This repo has generic helper code and templates
+# Github Dev Powerpack
+
+Powerpack for developing code and managing CI/CD (GitHub currently). This repo has generic helper code and templates
 to quickly bootstrap new projects and to raise the quality of existing ones.
 
 ## Bootstrap a repo
