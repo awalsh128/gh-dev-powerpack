@@ -111,9 +111,11 @@ Role conventions:
    locally: the check passes on a fresh bootstrap and exits 1 on a deleted output or an edited
    source; skills-ref passes both skills and rejects a bad name. The workflow hasn't been linted
    (no actionlint).
-   - Follow-up: this repo has no CI of its own, so the generated files in `templates/agentic/` can
-     drift from `.rulesync/`. Regenerate after editing roles (`cd templates/agentic && npx -y
-     rulesync@43.4.1 generate`), or add a repo-level workflow for it.
+   - In this repo, `.github/workflows/agentic-template.yml` runs the same check against
+     `templates/agentic/`. It also bootstraps the set into a new repo, checks that the skill
+     symlinks survive, and validates the skills. It reads `RULESYNC_VERSION` and `SKILLS_REF`
+     from the template's workflow, so those are pinned in one place. After editing a role, run
+     `cd templates/agentic && npx -y rulesync@43.4.1 generate`.
 6. ~~Evaluate~~ (partly done, 2026-11-14). See [Evaluation](#evaluation-2026-11-14) below.
 7. ~~Wire up~~ (done): README template-set row and after-bootstrap step, plus the
    [Agentic Configuration](agentic-config.md) guide.
