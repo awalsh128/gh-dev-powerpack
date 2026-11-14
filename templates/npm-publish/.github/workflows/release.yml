@@ -1,0 +1,144 @@
+name: Release
+
+# Releases the npm package with semantic-release, always gated by CI:
+# - staging: ci.yml calls this after CI passes, releasing a candidate (e.g. 1.2.0-rc.1) as a tag and
+#   GitHub prerelease only.
+# - main: promote.yml starts this after fast-forwarding main to a CI-passed staging commit,
+#   releasing an official version (e.g. 1.2.0) and publishing it to npm. With the npm-pages set
+#   (typedoc.json), it also deploys the API docs to GitHub Pages.
+# - Manual runs first require a successful CI run for the commit.
+#
+# Requires (see docs/npm-publishing.md in gh-dev-powerpack):
+# - A 'release' environment that only main and staging can use, holding RELEASE_BOT_APP_ID
+#   (variable) and RELEASE_BOT_PK (secret) for the app that pushes release tags.
+# - An npm trusted publisher for this workflow file and the 'release' environment.
+# - .github/actions/setup (node set) and .github/actions/require-ci-success (common set).
+# - release.config.cjs in PACKAGE_DIR (npm-publish set).
+# - For API docs, typedoc.json in PACKAGE_DIR (npm-pages set) and GitHub Pages set up to deploy from
+#   main (see docs/github-pages.md in gh-dev-powerpack).
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Run the release process without publishing anything or pushing tags"
+        type: boolean
+        required: false
+        default: false
+
+permissions: {}
+
+env:
+  # The package to release. In a monorepo, set it to the package's directory, such as
+  # packages/my-lib; only commits that change that directory then count (semantic-release-monorepo).
+  PACKAGE_DIR: "."
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+    outputs:
+      version: ${{ steps.semantic-release.outputs.version }} # Empty when nothing was released
+      docs-dir: ${{ steps.semantic-release.outputs.docs-dir }} # Empty unless API docs were built
+    # One release per branch at a time; never cancel one that is tagging.
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
+    permissions:
+      actions: read # For checking CI results on manual runs
+      contents: write # For tags and GitHub releases
+      pages: read # For configure-pages to read the Pages site settings
+      id-token: write # For OIDC: npm trusted publishing with provenance
+      issues: write # For semantic-release comments
+      pull-requests: write # For semantic-release comments
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0 # semantic-release reads every commit and tag since the last release
+          persist-credentials: false
+
+      - name: Require CI success
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: ./.github/actions/require-ci-success
+        with:
+          sha: ${{ github.sha }}
+          token: ${{ github.token }}
+
+      # This job can mint npm publish (OIDC) and GitHub tokens, so dependencies' install scripts
+      # don't run. Build the package in its prepack script, which npm publish runs.
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          ignore-scripts: true
+
+      # GitHub rejects tag creation by GITHUB_TOKEN when a ruleset restricts creations, so the tag
+      # is pushed with the release-bot app token, which promote.yml also uses to update main.
+      - name: Create release-bot token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PK }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+
+      # The release tools are pinned here rather than in package.json, so their dependencies don't
+      # reach the project's audit.
+      # Also builds the API docs when typedoc.json exists, and sets the 'version' and 'docs-dir'
+      # outputs when it releases (see release.config.cjs).
+      - name: Publish with semantic-release
+        id: semantic-release
+        working-directory: ${{ env.PACKAGE_DIR }}
+        shell: bash
+        env:
+          # semantic-release pushes the tag with GIT_CREDENTIALS and calls the GitHub API with
+          # GITHUB_TOKEN. npm publishing uses trusted publishing (OIDC), so no npm token.
+          GIT_CREDENTIALS: x-access-token:${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          set -euo pipefail
+          args=()
+          [[ "$DRY_RUN" == "true" ]] && args+=(--dry-run)
+          [[ "$PACKAGE_DIR" != "." ]] && args+=(--extends semantic-release-monorepo)
+          npx --yes \
+            --package semantic-release@25.0.9 \
+            --package semantic-release-monorepo@8.0.2 \
+            --package conventional-changelog-conventionalcommits@9.3.1 \
+            --package @semantic-release/exec@7.1.0 \
+            semantic-release "${args[@]}"
+
+      # Only official releases update the docs site. Dry runs and runs that release nothing leave
+      # 'docs-dir' empty.
+      - name: Setup Pages
+        if: ${{ github.ref == 'refs/heads/main' && steps.semantic-release.outputs.docs-dir != '' }}
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Upload Pages artifact
+        if: ${{ github.ref == 'refs/heads/main' && steps.semantic-release.outputs.docs-dir != '' }}
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ${{ steps.semantic-release.outputs.docs-dir }}
+
+  # Deploys in its own job so it can use the github-pages environment, which records each deployment
+  # and only allows main. The release job can't use it because it also runs on staging.
+  deploy-pages:
+    needs: release
+    if: ${{ github.ref == 'refs/heads/main' && needs.release.outputs.docs-dir != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write # For GitHub Pages deployment
+      id-token: write # For OIDC verification of the Pages deployment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
