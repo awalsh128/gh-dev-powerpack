@@ -126,10 +126,10 @@ Role conventions:
 skill descriptions about 130, role descriptions about 250; estimated at 4 characters per token).
 Skill bodies (330–550 tokens) and role prompts (160–310) load only when used.
 
-**Method:** replay past ts-apt fixes. Each task starts from a clone at the fix commit's parent,
+**Method:** replay past fixes from a small TypeScript library. Each task starts from a clone at the fix commit's parent,
 with a prompt written as a bug report or feature request. Scoring overlays the commit's own tests,
 which the agent never saw, then runs them, the unit suite and `tsc`. Every hidden test was checked
-to fail before the fix and pass after it. Both conditions use ts-apt's current `AGENTS.md`; "set"
+to fail before the fix and pass after it. Both conditions use the source repo's current `AGENTS.md`; "set"
 adds the agentic set and its Subagents section. Runs used Claude Code 2.1.325 headless:
 `--model sonnet --effort medium --setting-sources project --strict-mcp-config`, a shell
 allowlist, and a $5 cap. One run per task and condition.

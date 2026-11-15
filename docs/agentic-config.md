@@ -110,6 +110,6 @@ hand, ideally to a release at least two weeks old, and change the command above 
 ## Does it help?
 
 The set adds about 640 tokens to each session before `AGENTS.md` is filled in. A first evaluation
-on two small ts-apt fixes found no difference in success or cost, and the agent didn't delegate
+on two small fixes found no difference in success or cost, and the agent didn't delegate
 on such small tasks, as intended. Its effect on larger changes hasn't been measured yet. See the
 [evaluation](agentic-plan.md#evaluation-2026-11-14) for details.

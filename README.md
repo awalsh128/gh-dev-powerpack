@@ -7,6 +7,15 @@
 Powerpack for developing code and managing CI/CD (GitHub currently). This repo has generic helper code and templates
 to quickly bootstrap new projects and to raise the quality of existing ones.
 
+- 🚀 **Bootstrap**: one command copies composable template sets into a new or existing repo.
+- 🧰 **Repo hygiene**: issue forms, PR template, labels, triage, CodeQL and Dependabot for pinned actions.
+- ✍️ **Conventional commits**: commitlint, a husky hook and PR checks for commits and titles.
+- 📦 **Release flow**: `staging` to `main` promotion with rulesets, plus semantic-release for npm and VS Code extensions.
+- 📚 **API docs**: TypeDoc built and deployed to GitHub Pages on official releases.
+- 🧹 **Language tooling**: C++, .NET, Node and Rust formatting, linting and CI.
+- 🤖 **Agentic config**: one source of coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity.
+- 🔒 **Safer installs**: `safe_fetch_exec.sh` checks a SHA-256 before running a downloaded script.
+
 ## Bootstrap a repo
 
 ```bash
@@ -71,7 +80,7 @@ After bootstrapping, edit:
 
 ## Sources
 
-These were made generic from awalsh128/ts-apt (release flow, npm publishing, API docs on Pages, PR and Dependabot
+These were made generic from the author's own projects (release flow, npm publishing, API docs on Pages, PR and Dependabot
 config, CI actions), awalsh128/vscode-keep-sorted and awalsh128/vscode-regex-explain (extension
 publishing, labels, issue forms, triage), awalsh128/fluentcpp (C++
 formatting and linting) and awalsh128/PcapngFile (.NET `.editorconfig`). Actions are pinned to

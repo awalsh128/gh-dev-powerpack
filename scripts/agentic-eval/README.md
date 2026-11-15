@@ -28,8 +28,8 @@ API usage. Small fixes cost about $0.10–0.20 each on Sonnet.
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `EVAL_DIR` | `$TMPDIR/agentic-eval` | Clones, transcripts (`runs/*.jsonl`) and `results.tsv` |
-| `TASKS_FILE` | `tasks_ts_apt.sh` | Task definitions |
-| `SRC_REPO` | `~/repos/ts-apt` | Local clone of the repo the tasks come from |
+| `TASKS_FILE` | `tasks_example.sh` | Task definitions |
+| `SRC_REPO` | none (required) | Local clone of the repo the tasks come from |
 | `AGENTS_REF` | `HEAD` | Ref of the source repo's `AGENTS.md` to use in both conditions |
 | `MODEL`, `EFFORT` | `sonnet`, `medium` | Agent model and effort |
 | `BUDGET_USD`, `TIMEOUT_S` | `5`, `1800` | Per-run cost and time limits |
@@ -43,11 +43,11 @@ API usage. Small fixes cost about $0.10–0.20 each on Sonnet.
 | `score.sh` | Overlays the hidden tests and runs the checks for one run |
 | `analyze.py` | Joins scores with cost, turns, tokens, and subagent and skill use from the transcripts |
 | `common.sh` | Shared settings and task lookup |
-| `tasks_ts_apt.sh` | ts-apt tasks, prompts and commands |
+| `tasks_example.sh` | Example tasks, prompts and commands |
 
 ## Add tasks or another repo
 
-Copy `tasks_ts_apt.sh`, point `TASKS_FILE` at it, and set the source repo, install, test and
+Copy `tasks_example.sh`, point `TASKS_FILE` at it, and set the source repo, install, test and
 type-check commands and the shell allowlist. For each task, pick a fix commit whose tests are
 small and self-contained. Then check that its hidden tests fail before the fix and pass after:
 
