@@ -19,6 +19,16 @@ Put task-specific detail in docs/agents/ and link it below. Delete this comment.
 
 - TODO: slow or destructive commands, generated files not to edit by hand, and so on.
 
+## Housekeeping
+
+- Delete branches, local and remote, whose work is finished: the pull request is merged or closed
+  and the branch has no commits that are not already in it. Squash merges hide this from
+  `git branch --merged`, so match each branch to its pull request and compare the branch tip with
+  the pull request's head commit.
+- Never delete the default or integration branches, a branch with an open pull request, or one with
+  commits its pull request lacks; list those instead. Remove a worktree only after checking it has
+  no uncommitted changes.
+
 ## Subagents
 
 You are the only agent that edits files. Subagents only read and report. Use the `delegate` skill
