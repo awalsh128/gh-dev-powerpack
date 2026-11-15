@@ -6,7 +6,7 @@
 #   -f  Overwrite files that already exist in the target.
 #   -n  Dry run: print what would be copied.
 # Sets: see templates/ (common, conventional-commits, release-flow, node, npm-publish, npm-pages,
-# vscode-extension, cpp, dotnet, rust).
+# vscode-extension, cpp, dotnet, rust, agentic, agentic-powerpack).
 # Symlinks in a set are recreated as symlinks.
 #
 # Placeholders: __OWNER__, __REPO__ (from the target's origin remote) and __MAINTAINER__
