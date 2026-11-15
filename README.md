@@ -67,6 +67,7 @@ After bootstrapping, edit:
 | `scripts/setup_npm_publish.sh` | Publish a placeholder npm package (public and deprecated, or private with `-p`) and register its trusted publisher with `npm trust`; prints the npmjs.com steps |
 | `scripts/setup_github_pages.sh` | Turn on Pages with GitHub Actions as the source, let `main` deploy to the `github-pages` environment, and set the repository website |
 | `scripts/setup_vscode_extension_publish.sh` | Create the Open VSX namespace and publish a placeholder version; prints the Marketplace and Open VSX trusted publishing steps with your values |
+| `scripts/safe_fetch_exec.sh` | Safer replacement for `curl \| bash`: download over HTTPS, check the SHA-256 the publisher lists, then run (`--dry-run` to read it first). Cite the published hash in a repo's install docs; see [Installing from a script](docs/safe-install.md) |
 
 ## Sources
 
