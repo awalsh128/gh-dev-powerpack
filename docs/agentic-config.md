@@ -30,7 +30,8 @@ the evidence behind it.
 
 If the repo already has an `AGENTS.md` or `CLAUDE.md`, bootstrap keeps it. In that case:
 
-- add the `## Subagents` section from `templates/agentic/AGENTS.md` to your `AGENTS.md`;
+- add the `## Subagents` section, and optionally `## Housekeeping` (delete branches whose pull
+  request is merged or closed), from `templates/agentic/AGENTS.md` to your `AGENTS.md`;
 - if `CLAUDE.md` has content of its own, add `@AGENTS.md` as its first line.
 
 ## Optional: sync with the powerpack
