@@ -33,6 +33,26 @@ If the repo already has an `AGENTS.md` or `CLAUDE.md`, bootstrap keeps it. In th
 - add the `## Subagents` section from `templates/agentic/AGENTS.md` to your `AGENTS.md`;
 - if `CLAUDE.md` has content of its own, add `@AGENTS.md` as its first line.
 
+## Optional: sync with the powerpack
+
+The `agentic-powerpack` set adds a `powerpack-sync` skill that compares your repo with the
+current patterns in this repo and proposes updates. It needs `agentic` and is off until you turn
+it on.
+
+```bash
+./bootstrap.sh ~/repos/my-project agentic agentic-powerpack
+```
+
+`.agents/powerpack.json` controls it:
+
+- `mode`: `off` (default) or `suggest`.
+- `sets`: per-set override, such as `{"node": "off", "common": "suggest"}`.
+- `ignore`: paths the skill never compares, such as `.github/labels.yaml`.
+
+The skill finds which sets your repo uses from their signature files (listed in
+`.agents/skills/powerpack-sync/references/signatures.md`), reports differences that matter, and
+changes nothing until you approve each patch.
+
 ## Fill in AGENTS.md
 
 Every agent loads this file in every session and follows it closely, so each line costs tokens
