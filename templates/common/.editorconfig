@@ -14,5 +14,5 @@ trim_trailing_whitespace = false
 [Makefile]
 indent_style = tab
 
-[*.{py,cs,java,kt}]
+[*.{py,cs,java,kt,rs}]
 indent_size = 4

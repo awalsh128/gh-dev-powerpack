@@ -34,12 +34,13 @@ remote. Override them with `OWNER=`, `REPO=` and `MAINTAINER=`.
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing; needs `node` |
 | `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
+| `rust` | `rustfmt.toml` and a Rust workflow with `fmt`, `clippy` and `test` jobs (stable toolchain from the runner's rustup, warnings denied, `--locked`). Needs a committed `Cargo.lock` |
 | `agentic` | Coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity from one source: a short `AGENTS.md` skeleton, five read-only subagent roles generated with rulesync, `delegate` and `progress-notes` skills shared through symlinks, and an Agent Config check workflow. See [Agentic Configuration](docs/agentic-config.md) |
 
 After bootstrapping, edit:
 
-- `codeql.yml`: the language matrix.
-- `dependabot.yml`: uncomment the package ecosystem block.
+- `codeql.yml`: the language matrix (for Rust, add `language: rust` with `build-mode: none`).
+- `dependabot.yml`: uncomment the package ecosystem block (`cargo` for Rust).
 - `labels.yaml`: add project-specific labels.
 - `rulesets/staging.json`: the required status check names must match your CI job names.
 - `AGENTS.md`: replace the `TODO`s with the repo's commands, conventions and warnings.

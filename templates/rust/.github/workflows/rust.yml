@@ -1,0 +1,50 @@
+name: Rust
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install toolchain
+        run: rustup toolchain install stable --profile minimal --component rustfmt --no-self-update
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install toolchain
+        run: rustup toolchain install stable --profile minimal --component clippy --no-self-update
+
+      - name: Run clippy
+        run: cargo clippy --workspace --all-targets --all-features --locked
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install toolchain
+        run: rustup toolchain install stable --profile minimal --no-self-update
+
+      - name: Run tests
+        run: cargo test --workspace --all-features --locked
