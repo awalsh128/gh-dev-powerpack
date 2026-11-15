@@ -1,11 +1,13 @@
-# Eval tasks replayed from awalsh128/ts-apt. Sourced through common.sh.
+# Example eval tasks, replayed from fixes in one TypeScript repo. Sourced through common.sh.
+# Copy this file and replace the tasks, commands and prompts to evaluate another repo.
 #
 # Each task starts from the parent of a real fix commit. HIDDEN lists that commit's own tests;
 # the agent never sees them, and score.sh overlays them afterwards.
 
-SRC_REPO="${SRC_REPO:-$HOME/repos/ts-apt}"
+# Local clone of the repo the tasks come from. Required.
+SRC_REPO="${SRC_REPO:?set SRC_REPO to a local clone of the repo the tasks come from}"
 # Origin URL for the clones, so bootstrap.sh can fill in the owner and repo.
-REMOTE_URL=https://github.com/awalsh128/ts-apt.git
+REMOTE_URL="${REMOTE_URL:-$(git -C "$SRC_REPO" remote get-url origin)}"
 # Both conditions use the source repo's AGENTS.md at this ref.
 AGENTS_REF="${AGENTS_REF:-HEAD}"
 
