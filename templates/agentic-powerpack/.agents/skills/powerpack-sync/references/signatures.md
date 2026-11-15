@@ -15,7 +15,7 @@ when none match.
 | `cpp` | `.clang-format` |
 | `dotnet` | `.editorconfig` containing `dotnet_` rules |
 | `rust` | `.github/workflows/rust.yml` or `rustfmt.toml` |
-| `agentic` | `.rulesync/` or `.agents/skills/delegate/` |
+| `agentic` | `.rulesync/`, `.agents/skills/delegate/`, or `.github/copilot-instructions.md` that points to `AGENTS.md` |
 
 A file can match one signature and still be edited by hand. Compare the files of a detected set
 one by one rather than treating the whole set as in sync or out of sync.
