@@ -18,6 +18,7 @@ the evidence behind it.
 | `AGENTS.md` | Instructions every tool reads in every session. A skeleton for you to fill in |
 | `CLAUDE.md` | `@AGENTS.md`, so Claude Code reads the same file |
 | `.gemini/settings.json` | Points Gemini CLI at `AGENTS.md` |
+| `.github/copilot-instructions.md` | Points GitHub Copilot at `AGENTS.md`. Don't add rules here |
 | `.agents/skills/` | Skills: `delegate` (when and how to use a subagent) and `progress-notes` (notes for work that spans sessions) |
 | `.claude/skills`, `.github/skills` | Symlinks to `.agents/skills/` for Claude Code and Copilot |
 | `.rulesync/subagents/` | Source for the five roles: `explorer`, `researcher`, `planner`, `reviewer`, `verifier` |
@@ -101,7 +102,7 @@ is nothing to generate.
 | --- | --- | --- | --- |
 | Claude Code | `CLAUDE.md` → `AGENTS.md` | `.claude/agents/`, read-only by tool list | `.claude/skills` (symlink) |
 | Codex CLI | `AGENTS.md` | `.codex/agents/*.toml`, read-only **by prompt only** | `.agents/skills/` |
-| GitHub Copilot | `AGENTS.md` | `.github/agents/*.agent.md`, read-only by tool list | `.github/skills` (symlink) |
+| GitHub Copilot | `AGENTS.md`, plus `.github/copilot-instructions.md` pointing to it | `.github/agents/*.agent.md`, read-only by tool list | `.github/skills` (symlink) |
 | Antigravity CLI | `AGENTS.md` | `.agents/agents/`, read-only by tool list | `.agents/skills/` |
 | Gemini CLI | `AGENTS.md` via `.gemini/settings.json` | not generated | `.agents/skills/` |
 

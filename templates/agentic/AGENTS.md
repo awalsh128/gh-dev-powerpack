@@ -34,6 +34,13 @@ Put task-specific detail in docs/agents/ and link it below. Delete this comment.
 You are the only agent that edits files. Subagents only read and report. Use the `delegate` skill
 before starting one, and the `progress-notes` skill for work that spans sessions.
 
+## Single source for all AI tools
+
+- Instructions: `AGENTS.md` only. `CLAUDE.md`, `.gemini/settings.json` and
+  `.github/copilot-instructions.md` point to it; never add rules to them.
+- Skills: `.agents/skills/` only. `.claude/skills` and `.github/skills` are symlinks to it.
+- Roles: `.rulesync/subagents/` only. Every other role directory is generated output.
+
 ## More context
 
 - TODO: `docs/agents/<topic>.md`: read it when <situation>.
