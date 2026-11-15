@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Entry point for `gh dev-powerpack`. Runs bootstrap.sh from the installed extension, so
+# `gh dev-powerpack [-f] [-n] <target-dir> <set> [set ...]` works like ./bootstrap.sh.
+set -euo pipefail
+
+here="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+exec "$here/bootstrap.sh" "$@"

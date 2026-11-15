@@ -23,6 +23,14 @@ to quickly bootstrap new projects and to raise the quality of existing ones.
 ./bootstrap.sh    ~/repos/my-project common conventional-commits
 ```
 
+Or install it as a `gh` extension and run it from anywhere:
+
+```bash
+gh extension install awalsh128/gh-dev-powerpack
+gh dev-powerpack ~/repos/my-project common conventional-commits
+gh extension upgrade dev-powerpack   # later, to get new templates
+```
+
 Files that already exist in the target are skipped unless you pass `-f`. When two sets have the
 same file, the set listed first wins, so put language sets before `common` (for example
 `dotnet common` to get the .NET `.editorconfig`).
