@@ -1,12 +1,14 @@
 name: Agentic Template
 
 # Keeps templates/agentic consistent: the generated subagent files must match .rulesync/, and a
-# bootstrapped repo must get the skill symlinks and valid skills. Fix a generate failure with:
+# bootstrapped repo must get the skill symlinks and valid skills, including the skill the
+# vscode-extension set adds. Fix a generate failure with:
 #   cd templates/agentic && npx -y rulesync@<RULESYNC_VERSION> generate
 on:
   pull_request:
     paths:
       - templates/agentic/**
+      - templates/vscode-extension/.agents/**
       - bootstrap.sh
       - gh-dev-powerpack
       - .github/workflows/agentic-template.yml
@@ -53,7 +55,7 @@ jobs:
           target="$RUNNER_TEMP/target"
           git init -q "$target"
           git -C "$target" remote add origin https://github.com/example/target.git
-          ./bootstrap.sh "$target" agentic
+          ./bootstrap.sh "$target" agentic vscode-extension
           echo "TARGET=$target" >>"$GITHUB_ENV"
 
       - name: Check skill symlinks survived bootstrap

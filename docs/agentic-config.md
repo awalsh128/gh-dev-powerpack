@@ -19,7 +19,7 @@ the evidence behind it.
 | `CLAUDE.md` | `@AGENTS.md`, so Claude Code reads the same file |
 | `.gemini/settings.json` | Points Gemini CLI at `AGENTS.md` |
 | `.github/copilot-instructions.md` | Points GitHub Copilot at `AGENTS.md`. Don't add rules here |
-| `.agents/skills/` | Skills: `delegate` (when and how to use a subagent), `progress-notes` (notes for work that spans sessions) and `vsce-demos` (record a demo video of a VS Code extension) |
+| `.agents/skills/` | Skills: `delegate` (when and how to use a subagent), and `progress-notes` (notes for work that spans sessions) |
 | `.claude/skills`, `.github/skills` | Symlinks to `.agents/skills/` for Claude Code and Copilot |
 | `.rulesync/subagents/` | Source for the five roles: `explorer`, `researcher`, `planner`, `reviewer`, `verifier` |
 | `.rulesync/TIERS.md` | How each role's tier (`fast`, `balanced`, `deep`) maps to each tool's model settings |
@@ -83,26 +83,42 @@ The symlinks make it visible to every tool, so there is nothing to generate.
 
 ## Recommended skills
 
-The set doesn't ship general-purpose skills; install upstream ones instead
-([principle 11](agentic-principles.md#11-reuse-existing-skills-before-writing-your-own)). All are
-optional and none is enabled by default. Each adds its `name` and `description` to every session,
-so install only what you use.
+The set doesn't ship general-purpose skills. For those, pick an upstream pack on the evidence
+below ([principle 11](agentic-principles.md#11-reuse-existing-skills-before-writing-your-own)).
+All are optional and none is enabled by default. Each adds its `name` and `description` to every
+session, so install only what you use.
 
-| Need | Skill | From |
-| --- | --- | --- |
-| Test-first changes | `tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| Review a branch against standards and the spec | `code-review` | same |
-| Stress-test a plan before building | `grilling` | same |
-| Plan work that won't fit in one session | `wayfinder`: a map of decision tickets on the issue tracker | same |
-| Notes for one task across a few sessions | `progress-notes` (shipped here, local file, no tracker) | this set |
-| TypeScript conventions (types, functions, variables, naming, tests) | `typescript-*`, see [TypeScript style](#typescript-style) | [mkosir/typescript-style-guide](https://github.com/mkosir/typescript-style-guide) |
+**Pack health** (measured 2026-11-15 with the GitHub API; commits are for the last 90 days and
+capped at 100):
 
-Use `wayfinder` when the work spans many sessions and several people or agents; use
-`progress-notes` when it is one task you will resume.
+| Pack | License | Commits | Authors | Latest release | Open issues |
+| --- | --- | ---: | ---: | --- | ---: |
+| [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | MIT | 100+ | 12 | 2026-11-14 | 128 |
+| [mattpocock/skills](https://github.com/mattpocock/skills) (plugin 1.3.2) | MIT | 100+ | 6 | 2026-10-29 | 248 |
+| [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | MIT | 100+ | 15 | 2026-11-07 | 12 |
+| [anthropics/skills](https://github.com/anthropics/skills) | none at repo level | 15 | 7 | none | 1,548 |
+| [obra/superpowers](https://github.com/obra/superpowers) | MIT | 6 | 1 | 2026-11-03 | 355 |
 
-Install a pack either as a plugin, which updates itself, or with [skills.sh](https://skills.sh),
-which copies editable files into the repo. Pick one per agent, or you get every skill twice. For
-Claude Code:
+**Skills by need.** Cost is estimated tokens at startup / when the skill body loads (4 characters
+per token). The default comes from a pack with several recent authors and has the lowest body cost; the
+alternative is the next best. Some superpowers skills are cheaper still (`test-driven-development`
+25 / 2,356, `requesting-code-review` 32 / 703), but that pack has one author and 6 recent commits.
+
+| Need | Default | Cost | Alternative | Relation to the shipped set |
+| --- | --- | ---: | --- | --- |
+| Test-first changes | mattpocock `tdd` | 38 / 860 | addyosmani `test-driven-development` (146 / 4,035) | none |
+| Review a branch against a spec | mattpocock `code-review` (needs `/setup-matt-pocock-skills`) | 108 / 1,557 | addyosmani `code-review-and-quality` (99 / 5,202) | `reviewer` role is a quick read-only diff check; use this for a whole branch against a spec |
+| Stress-test a plan | mattpocock `grilling` | 40 / 469 | superpowers `brainstorming` (57 / 3,733) | none |
+| Plan work across many sessions | mattpocock `wayfinder` (issue-tracker tickets) | 51 / 3,035 | planning-with-files (156 / 9,709, files on disk) | `progress-notes` covers one task you will resume; use this for work that needs a shared map |
+
+What this does not show: how well any skill works, whether it passes `skills-ref validate`, and
+which tools it supports beyond Claude Code. Stars are left out because the most-starred results
+for agent skills include counts that don't look credible. Re-measure when you update a pack, by
+hand, with the same method.
+
+Install a pack as a plugin, which updates itself, or with [skills.sh](https://skills.sh), which
+copies editable files into the repo. Pick one per agent, or you get every skill twice. For
+mattpocock/skills on Claude Code:
 
 ```bash
 claude plugin install mattpocock-skills@claude-plugins-official
@@ -112,45 +128,9 @@ The [upstream README](https://github.com/mattpocock/skills#installation-30-secon
 commands for Codex, Copilot and Gemini CLI. Skills installed as plugins live outside the repo, so
 they aren't part of what the Agent Config check validates.
 
-### TypeScript style
-
-For an npm library (the `node` and `npm-publish` sets), install only the skills that fit, not the
-whole pack. The pack's `typescript-react` and `typescript-source-organization` skills suit apps and
-monorepos, and the umbrella `typescript-style-guide` overlaps the specific ones and triggers on any
-TypeScript task. `--copy` and `-a codex` put real files in `.agents/skills/`, which every other
-tool reads through the symlinks:
-
-```bash
-npx skills add mkosir/typescript-style-guide -a codex --copy -y \
-  -s typescript-types typescript-functions typescript-variables typescript-naming typescript-tests
-# add typescript-discriminated-unions if the code models variants
-```
-
-Read the installed files before you commit them, since skills run with the agent's permissions.
-Commit `skills-lock.json` too, so `npx skills update` can tell what changed.
-
-A skill only loads when its description matches, so route to it from `AGENTS.md`. Paste this,
-trimmed to the skills you installed, under Conventions. It names the trigger and nothing else, so
-it costs a few lines per session:
-
-```markdown
-## TypeScript Style
-
-Before writing or reviewing TypeScript, load only the skill in `.agents/skills/` that the change touches:
-
-- Type definitions, `any`/`unknown`, assertions, `readonly`, constants: `typescript-types`.
-- Function signatures, arguments, return types, purity: `typescript-functions`.
-- `const`, enum alternatives, boolean flags, `null` vs `undefined`: `typescript-variables`.
-- New exports, identifiers, comments, TSDoc: `typescript-naming`.
-- Tests: `typescript-tests`.
-
-This file wins over the skills where they disagree. Don't rewrite existing code to match a skill.
-```
-
-The skills carry opinions that may not match the repo, such as `type` over `interface` and test
-titles written as `should ... when ...`. List each override in `AGENTS.md` (for example "keep
-`interface`") so the agent doesn't flip existing code. The skills pass `skills-ref validate`, the
-check the Agent Config workflow runs.
+The `vsce-demos` skill (record a demo video of a VS Code extension) ships with the
+`vscode-extension` set, not this one, so repos that aren't extensions don't pay for it. It lands
+in `.agents/skills/`, so install `agentic` too for the Claude Code and Copilot symlinks.
 
 ## Tool support
 
