@@ -98,11 +98,8 @@ its own config, where the tool allows that. Roles name the smallest tool set tha
 Every tool spells model names differently: Claude Code uses aliases or IDs, Codex and Gemini use
 IDs, and Copilot accepts a ranked list. They also change faster than roles do.
 
-**In the template:** each role is `fast`, `balanced` or `deep`, and `.rulesync/TIERS.md` maps
-each tier to per-tool settings. Claude Code uses family aliases (`haiku`, `sonnet`, `opus`) and
-Antigravity uses `flash` and `pro`, so both follow new releases without edits. Codex and Copilot
-keep the session model and vary only the reasoning effort, because pinning their model IDs in a
-template would go stale.
+**In the template:** each role is `fast`, `balanced` or `deep`, and `.rulesync/TIERS.md` is the
+only place that maps a tier to per-tool settings.
 
 ## 9. Inject context you already know is needed
 
