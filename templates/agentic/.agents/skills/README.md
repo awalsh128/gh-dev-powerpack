@@ -4,8 +4,7 @@ One folder per skill, following the [Agent Skills spec](https://agentskills.io/s
 `<name>/SKILL.md`, plus optional `scripts/`, `references/` and `assets/`. The folder name must match
 the skill's `name`.
 
-Codex, Gemini CLI and Antigravity read this folder directly. `.claude/skills` and
-`.github/skills` (Copilot) are symlinks to it, so add skills only here.
+Add skills only here; `AGENTS.md` explains how every tool finds them.
 
 Agents load only a skill's `name` and `description` at startup and read the body when the skill
 is used. Write the description as "what it does + when to use it". Keep `SKILL.md` under 500

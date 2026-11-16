@@ -57,17 +57,9 @@ changes nothing until you approve each patch.
 
 ## Fill in AGENTS.md
 
-Every agent loads this file in every session and follows it closely, so each line costs tokens
-and steers behavior. Keep it under about 60 lines, and write it yourself. Generated files did
-worst in the [AGENTS.md study](https://arxiv.org/pdf/2602.11988). Include only what an agent
-can't learn from the code:
-
-- exact build, test, lint and type-check commands, with the fast way to test one file;
-- conventions that differ from the language or framework defaults;
-- warnings: slow or destructive commands, generated files, what not to touch.
-
-Put task-specific detail, such as releasing or triage, in `docs/agents/<topic>.md`, and link it
-from `AGENTS.md` with the situation it applies to.
+Write it yourself and keep it short; the skeleton's header comment says what belongs in it, and
+[principle 1](agentic-principles.md#1-keep-the-root-instruction-file-short-and-hand-written) has
+the evidence. Put task-specific detail in `docs/agents/<topic>.md` and link it from `AGENTS.md`.
 
 ## Change a role
 
@@ -80,21 +72,14 @@ from `AGENTS.md` with the situation it applies to.
    npx -y rulesync@43.4.1 generate
    ```
 
-A new role should follow the same pattern as the existing ones:
-
-- read-only: say so in the prompt, and list only reading tools for each tool;
-- a prompt under about 40 lines;
-- a tagged output block with a length limit (`<findings>`, `<plan>`, …);
-- a tier from `TIERS.md`;
-- a row in the `delegate` skill's role table.
+A new role follows the existing ones (read-only, prompt under about 40 lines, a tagged output
+block with a length limit, a tier from `TIERS.md`) and gets a row in the `delegate` skill's role
+table. [Principles 3, 4 and 10](agentic-principles.md) explain why.
 
 ## Add a skill
 
-Create `.agents/skills/<name>/SKILL.md` following the [Agent Skills
-spec](https://agentskills.io/specification). The folder name must match `name`, and the
-`description` should say what the skill does and when to use it. Keep `SKILL.md` under 500 lines
-and move detail into `references/`. The symlinks make every skill visible to every tool, so there
-is nothing to generate.
+Create `.agents/skills/<name>/SKILL.md`; the rules are in `templates/agentic/.agents/skills/README.md`.
+The symlinks make it visible to every tool, so there is nothing to generate.
 
 ## Tool support
 
@@ -108,8 +93,8 @@ is nothing to generate.
 
 Known limits:
 
-- **Codex** agent files can't restrict tools or the sandbox, and Codex reads files through its
-  shell. Roles there are read-only only because their prompts say so.
+- **Codex** roles are read-only by prompt only; see "Read-only enforcement" in
+  `.rulesync/TIERS.md`.
 - **VS Code** also reads `.claude/agents/`, so Copilot in VS Code may list each role twice. If it
   does, remove `copilot` from `rulesync.jsonc` and regenerate.
 - **Antigravity** tool names come from its docs' examples and haven't been tested. A wrong tool
