@@ -95,6 +95,7 @@ so install only what you use.
 | Stress-test a plan before building | `grilling` | same |
 | Plan work that won't fit in one session | `wayfinder`: a map of decision tickets on the issue tracker | same |
 | Notes for one task across a few sessions | `progress-notes` (shipped here, local file, no tracker) | this set |
+| TypeScript conventions (types, functions, variables, naming, tests) | `typescript-*`, see [TypeScript style](#typescript-style) | [mkosir/typescript-style-guide](https://github.com/mkosir/typescript-style-guide) |
 
 Use `wayfinder` when the work spans many sessions and several people or agents; use
 `progress-notes` when it is one task you will resume.
@@ -110,6 +111,46 @@ claude plugin install mattpocock-skills@claude-plugins-official
 The [upstream README](https://github.com/mattpocock/skills#installation-30-second-setup) has the
 commands for Codex, Copilot and Gemini CLI. Skills installed as plugins live outside the repo, so
 they aren't part of what the Agent Config check validates.
+
+### TypeScript style
+
+For an npm library (the `node` and `npm-publish` sets), install only the skills that fit, not the
+whole pack. The pack's `typescript-react` and `typescript-source-organization` skills suit apps and
+monorepos, and the umbrella `typescript-style-guide` overlaps the specific ones and triggers on any
+TypeScript task. `--copy` and `-a codex` put real files in `.agents/skills/`, which every other
+tool reads through the symlinks:
+
+```bash
+npx skills add mkosir/typescript-style-guide -a codex --copy -y \
+  -s typescript-types typescript-functions typescript-variables typescript-naming typescript-tests
+# add typescript-discriminated-unions if the code models variants
+```
+
+Read the installed files before you commit them, since skills run with the agent's permissions.
+Commit `skills-lock.json` too, so `npx skills update` can tell what changed.
+
+A skill only loads when its description matches, so route to it from `AGENTS.md`. Paste this,
+trimmed to the skills you installed, under Conventions. It names the trigger and nothing else, so
+it costs a few lines per session:
+
+```markdown
+## TypeScript Style
+
+Before writing or reviewing TypeScript, load only the skill in `.agents/skills/` that the change touches:
+
+- Type definitions, `any`/`unknown`, assertions, `readonly`, constants: `typescript-types`.
+- Function signatures, arguments, return types, purity: `typescript-functions`.
+- `const`, enum alternatives, boolean flags, `null` vs `undefined`: `typescript-variables`.
+- New exports, identifiers, comments, TSDoc: `typescript-naming`.
+- Tests: `typescript-tests`.
+
+This file wins over the skills where they disagree. Don't rewrite existing code to match a skill.
+```
+
+The skills carry opinions that may not match the repo, such as `type` over `interface` and test
+titles written as `should ... when ...`. List each override in `AGENTS.md` (for example "keep
+`interface`") so the agent doesn't flip existing code. The skills pass `skills-ref validate`, the
+check the Agent Config workflow runs.
 
 ## Tool support
 
