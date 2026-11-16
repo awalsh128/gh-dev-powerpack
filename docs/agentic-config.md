@@ -81,6 +81,36 @@ table. [Principles 3, 4 and 10](agentic-principles.md) explain why.
 Create `.agents/skills/<name>/SKILL.md`; the rules are in `templates/agentic/.agents/skills/README.md`.
 The symlinks make it visible to every tool, so there is nothing to generate.
 
+## Recommended skills
+
+The set doesn't ship general-purpose skills; install upstream ones instead
+([principle 11](agentic-principles.md#11-reuse-existing-skills-before-writing-your-own)). All are
+optional and none is enabled by default. Each adds its `name` and `description` to every session,
+so install only what you use.
+
+| Need | Skill | From |
+| --- | --- | --- |
+| Test-first changes | `tdd` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| Review a branch against standards and the spec | `code-review` | same |
+| Stress-test a plan before building | `grilling` | same |
+| Plan work that won't fit in one session | `wayfinder`: a map of decision tickets on the issue tracker | same |
+| Notes for one task across a few sessions | `progress-notes` (shipped here, local file, no tracker) | this set |
+
+Use `wayfinder` when the work spans many sessions and several people or agents; use
+`progress-notes` when it is one task you will resume.
+
+Install a pack either as a plugin, which updates itself, or with [skills.sh](https://skills.sh),
+which copies editable files into the repo. Pick one per agent, or you get every skill twice. For
+Claude Code:
+
+```bash
+claude plugin install mattpocock-skills@claude-plugins-official
+```
+
+The [upstream README](https://github.com/mattpocock/skills#installation-30-second-setup) has the
+commands for Codex, Copilot and Gemini CLI. Skills installed as plugins live outside the repo, so
+they aren't part of what the Agent Config check validates.
+
 ## Tool support
 
 | Tool | Instructions | Roles | Skills |
