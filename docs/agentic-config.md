@@ -19,7 +19,7 @@ the evidence behind it.
 | `CLAUDE.md` | `@AGENTS.md`, so Claude Code reads the same file |
 | `.gemini/settings.json` | Points Gemini CLI at `AGENTS.md` |
 | `.github/copilot-instructions.md` | Points GitHub Copilot at `AGENTS.md`. Don't add rules here |
-| `.agents/skills/` | Skills: `delegate` (when and how to use a subagent) and `progress-notes` (notes for work that spans sessions) |
+| `.agents/skills/` | Skills: `delegate` (when and how to use a subagent), `progress-notes` (notes for work that spans sessions) and `vsce-demos` (record a demo video of a VS Code extension) |
 | `.claude/skills`, `.github/skills` | Symlinks to `.agents/skills/` for Claude Code and Copilot |
 | `.rulesync/subagents/` | Source for the five roles: `explorer`, `researcher`, `planner`, `reviewer`, `verifier` |
 | `.rulesync/TIERS.md` | How each role's tier (`fast`, `balanced`, `deep`) maps to each tool's model settings |
