@@ -124,16 +124,19 @@ message, so the git log carries state between runs
 **In the template:** each role ends with a fixed, tagged output block. Long tasks record progress
 somewhere durable (commit messages or the notes file), not only in the context window.
 
-## 11. Reuse existing skills before writing your own
+## 11. Reuse healthy existing skills before writing your own
 
 A skill costs tokens in every session (its `name` and `description` load at startup), and a copy
-of someone else's skill goes stale. Skills that are small, composable and maintained upstream, such
-as [mattpocock/skills](https://github.com/mattpocock/skills), are cheaper to install than to
-recreate.
+of someone else's skill goes stale. A skill that someone else keeps maintaining is cheaper to
+install than to recreate, but only if it is actually maintained and cheap to load.
 
 **In the template:** it ships only skills that depend on this set's own roles or layout
-(`delegate`, `progress-notes`) or that a repo type needs (`vsce-demos`). For general workflows such as
-TDD, code review, grilling or multi-session planning, it recommends an upstream skill and doesn't
-copy it. Before adding a skill, search for one that already does the job. Write your own only when
-it needs repo-specific roles or conventions. Install one pack per agent, and check that its
-descriptions don't trigger on the same requests as yours.
+(`delegate`, `progress-notes`). A skill that one repo type needs lives in that type's set
+(`vsce-demos` in `vscode-extension`). For general workflows such as TDD, code review, grilling or
+multi-session planning, it recommends an upstream skill and doesn't copy it.
+
+A recommendation rests on measured health, not on who wrote it: a license, recent commits and
+the number of authors behind them, releases, and the skill's startup and body cost. Don't use
+stars. Compare at least two packs for each need and name the alternative. Write your own skill
+only when it needs repo-specific roles or conventions. Install one pack per agent, and check
+that its descriptions don't trigger on the same requests as yours.
