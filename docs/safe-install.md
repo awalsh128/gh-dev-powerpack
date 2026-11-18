@@ -1,13 +1,13 @@
 # Installing from a script
 
-Don't tell users to run `curl ... | bash`. They run whatever the server sends at that moment, and a dropped connection
-can run half a script. Publish the script's SHA-256 with each release and have the docs check it before running. Background:
-[A Safer curl | bash](https://awalsh128.com/safer-curl-bash/).
+Don't tell users to run `curl ... | bash`. They run whatever the server sends at that moment, and a dropped
+connection can run half a script. Publish the script's SHA-256 with each release and have the docs check it
+before running. Background: [A Safer curl | bash](https://awalsh128.com/safer-curl-bash/).
 
 ## Publish the hash
 
-Upload `install.sh` as a release asset and put its hash in the release notes, so the hash lives on the release page, not
-beside a copy of the script that someone could change along with it.
+Upload `install.sh` as a release asset and put its hash in the release notes, so the hash lives on the release
+page, not beside a copy of the script that someone could change along with it.
 
 ```bash
 sha256sum install.sh | awk '{print $1}'
@@ -32,8 +32,8 @@ On macOS use `shasum -a 256 --check`. Link the release page so the hash is easy 
 
 ## One-liner helper
 
-[`scripts/safe_fetch_exec.sh`](../scripts/safe_fetch_exec.sh) does the same in one call, with size and time limits, and
-runs the script in a clean `bash`:
+[`scripts/safe_fetch_exec.sh`](../scripts/safe_fetch_exec.sh) does the same in one call, with size and time
+limits, and runs the script in a clean `bash`:
 
 ```bash
 scripts/safe_fetch_exec.sh "$PUB_SHA256" https://github.com/OWNER/REPO/releases/download/TAG/install.sh --prefix "$HOME/.local"
