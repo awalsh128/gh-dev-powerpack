@@ -30,7 +30,7 @@ If the file is missing, treat `mode` as `off`. Never edit this file unless asked
    [references/signatures.md](references/signatures.md). Skip sets that are `off`. Don't propose
    sets the repo doesn't use, but you may mention one in a single line.
 3. Fetch the current set from upstream, for example
-   `gh api repos/awalsh128/gh-dev-powerpack/contents/templates/<set>` (read-only). Don't clone it
+   `gh api repos/awalsh128/gh-dev-powerpack/contents/templates/<category>/<set>` (read-only). Don't clone it
    into the repo.
 4. For each file in a used set, skip `ignore` paths, then compare. Placeholders `__OWNER__`,
    `__REPO__` and `__MAINTAINER__` stand for this repo's values.

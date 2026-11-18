@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Creates or updates branch rulesets on a repo from JSON files (default: .github/rulesets/*.json).
 #
-# Usage: apply_rulesets.sh [-r owner/repo] [-a release_bot_app_id] [ruleset.json ...]
+# Usage: apply_rulesets.sh [-r owner/repo] [-a octo_sts_app_id] [ruleset.json ...]
 #   -r  Target repo (default: the current directory's GitHub repo).
-#   -a  GitHub App ID allowed to bypass the "main" ruleset, so the promote workflow can push to it.
+#   -a  Octo STS GitHub App ID (801323) allowed to bypass the "main" ruleset, so the promote
+#       workflow can push to it.
 set -euo pipefail
 
 repo=""
@@ -12,7 +13,7 @@ while getopts "r:a:h" opt; do
   case "$opt" in
     r) repo="$OPTARG" ;;
     a) app_id="$OPTARG" ;;
-    *) sed -n '2,6p' "$0"; exit 1 ;;
+    *) sed -n '2,7p' "$0"; exit 1 ;;
   esac
 done
 shift $((OPTIND - 1))

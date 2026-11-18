@@ -5,8 +5,11 @@
 # Usage: bootstrap.sh [-f] [-n] <target-dir> <set> [set ...]
 #   -f  Overwrite files that already exist in the target.
 #   -n  Dry run: print what would be copied.
-# Sets: see templates/ (common, conventional-commits, release-flow, node, npm-publish, npm-pages,
-# vscode-extension, cpp, dotnet, rust, agentic, agentic-powerpack).
+# Sets live in templates/<category>/<set>; pass just the set name. Categories and sets:
+#   core: common, conventional-commits
+#   release: release-flow, npm-publish, npm-pages, vscode-extension
+#   languages: node, cpp, dotnet, rust
+#   agentic-config: agentic, agentic-powerpack
 # Symlinks in a set are recreated as symlinks.
 #
 # Placeholders: __OWNER__, __REPO__ (from the target's origin remote) and __MAINTAINER__
@@ -14,19 +17,22 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+available_sets() {
+  find "$here/templates" -mindepth 2 -maxdepth 2 -type d -printf '%f\n' | sort | tr '\n' ' '
+}
 force=false
 dry_run=false
 while getopts "fnh" opt; do
   case "$opt" in
     f) force=true ;;
     n) dry_run=true ;;
-    *) sed -n '2,13p' "$0"; exit 1 ;;
+    *) sed -n '2,16p' "$0"; exit 1 ;;
   esac
 done
 shift $((OPTIND - 1))
 if [[ $# -lt 2 ]]; then
-  sed -n '2,13p' "$0"
-  echo "Available sets: $(ls "$here/templates" | tr '\n' ' ')"
+  sed -n '2,16p' "$0"
+  echo "Available sets: $(available_sets)"
   exit 1
 fi
 
@@ -46,9 +52,9 @@ fi
 echo "Target: $target ($OWNER/$REPO, maintainer $MAINTAINER)"
 
 for set in "$@"; do
-  src="$here/templates/$set"
-  if [[ ! -d "$src" ]]; then
-    echo "Unknown set '$set'. Available: $(ls "$here/templates" | tr '\n' ' ')" >&2
+  src="$(compgen -G "$here/templates/*/$set" | head -n1 || true)"
+  if [[ -z "$src" || ! -d "$src" ]]; then
+    echo "Unknown set '$set'. Available: $(available_sets)" >&2
     exit 1
   fi
   while IFS= read -r -d '' file; do

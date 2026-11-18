@@ -32,7 +32,7 @@ the evidence behind it.
 If the repo already has an `AGENTS.md` or `CLAUDE.md`, bootstrap keeps it. In that case:
 
 - add the `## Subagents` section, and optionally `## Housekeeping` (delete branches whose pull
-  request is merged or closed), from `templates/agentic/AGENTS.md` to your `AGENTS.md`;
+  request is merged or closed), from `templates/agentic-config/agentic/AGENTS.md` to your `AGENTS.md`;
 - if `CLAUDE.md` has content of its own, add `@AGENTS.md` as its first line.
 
 ## Optional: sync with the powerpack
@@ -78,7 +78,7 @@ table. [Principles 3, 4 and 10](agentic-principles.md) explain why.
 
 ## Add a skill
 
-Create `.agents/skills/<name>/SKILL.md`; the rules are in `templates/agentic/.agents/skills/README.md`.
+Create `.agents/skills/<name>/SKILL.md`; the rules are in `templates/agentic-config/agentic/.agents/skills/README.md`.
 The symlinks make it visible to every tool, so there is nothing to generate.
 
 ## Recommended skills
