@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Sets up a repository for the release-flow, npm-publish and vscode-extension sets with Octo STS:
-# creates the 'release' environment (main and staging only), checks that the Octo STS trust policies
-# are on the default branch, and applies the rulesets with the Octo STS app allowed to bypass main.
-# Prints the step only the website can do (installing the app). Safe to rerun.
+# creates the 'release' environment (main and staging only), turns on immutable releases, checks that
+# the Octo STS trust policies are on the default branch, and applies the rulesets with the Octo STS
+# app allowed to bypass main. Prints the step only the website can do (installing the app). Safe to rerun.
 #
 # Usage: setup_github_release.sh [-n] [-r owner/repo] [-e environment]
 #   -n  Dry run: print what would be done.
@@ -19,7 +19,7 @@ while getopts "nr:e:h" opt; do
     n) dry_run=true ;;
     r) repo="$OPTARG" ;;
     e) environment="$OPTARG" ;;
-    *) sed -n '2,10p' "$0"; exit 1 ;;
+    *) sed -n '2,11p' "$0"; exit 1 ;;
   esac
 done
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -50,6 +50,13 @@ for branch in main staging; do
       -f name="$branch" -f type=branch --silent
   fi
 done
+
+step "Immutable releases (published tags and assets can no longer change)"
+if [[ "$(gh api "repos/$repo/immutable-releases" --jq .enabled 2>/dev/null || echo false)" == "true" ]]; then
+  echo "Already enabled."
+else
+  run gh api -X PUT "repos/$repo/immutable-releases" --silent
+fi
 
 step "Octo STS trust policies on $default_branch"
 policies=0
