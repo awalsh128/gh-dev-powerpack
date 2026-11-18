@@ -5,11 +5,9 @@
 # Usage: bootstrap.sh [-f] [-n] <target-dir> <set> [set ...]
 #   -f  Overwrite files that already exist in the target.
 #   -n  Dry run: print what would be copied.
-# Sets live in templates/<category>/<set>; pass just the set name. Categories and sets:
-#   core: common, conventional-commits
-#   release: release-flow, npm-publish, npm-pages, vscode-extension
-#   languages: node, cpp, dotnet, rust
-#   agentic-config: agentic, agentic-powerpack
+# Sets live in templates/<category>/<set>; pass just the set name. Run with one argument to list the
+# available sets. Sets that need other sets (see templates/sets.json) print a warning if those are
+# not in the same command.
 # Symlinks in a set are recreated as symlinks.
 #
 # Placeholders: __OWNER__, __REPO__ (from the target's origin remote) and __MAINTAINER__
@@ -50,6 +48,14 @@ if [[ -z "$OWNER" ]]; then
   exit 1
 fi
 echo "Target: $target ($OWNER/$REPO, maintainer $MAINTAINER)"
+
+if command -v jq >/dev/null 2>&1; then
+  for set in "$@"; do
+    while read -r need; do
+      [[ " $* " == *" $need "* ]] || echo "Warning: '$set' needs '$need', which is not in this command." >&2
+    done < <(jq -r --arg s "$set" '.[][$s].needs // [] | .[]' "$here/templates/sets.json")
+  done
+fi
 
 for set in "$@"; do
   src="$(compgen -G "$here/templates/*/$set" | head -n1 || true)"

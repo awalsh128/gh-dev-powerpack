@@ -1,0 +1,51 @@
+{
+  "core": {
+    "common": {
+      "summary": "`.editorconfig`, issue forms (bug, feature, contact links), PR template, Dependabot for pinned actions, `labels.yaml` with a Sync Labels workflow (crazy-max/ghaction-github-labeler; dry run on PRs, never deletes), Issue Triage workflow (assign maintainer, label untemplated issues), CodeQL workflow, `require-ci-success` composite action"
+    },
+    "conventional-commits": {
+      "summary": "`commitlint.config.mjs`, husky `commit-msg` hook, Commit Lint workflow that checks every PR commit (wagoid/commitlint-github-action) and the PR title (amannn/action-semantic-pull-request)"
+    }
+  },
+  "release": {
+    "release-flow": {
+      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus branch rulesets for `main` and `staging`; you also supply a `ci.yml` that runs on pushes to `staging`",
+      "needs": ["common", "npm-publish"]
+    },
+    "npm-publish": {
+      "summary": "`release.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing",
+      "needs": ["node", "release-flow"]
+    },
+    "npm-pages": {
+      "summary": "`typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases",
+      "needs": ["npm-publish"]
+    },
+    "vscode-extension": {
+      "summary": "`publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks)",
+      "needs": ["node"]
+    }
+  },
+  "languages": {
+    "node": {
+      "summary": "Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations; add `prettier` and `format`/`format:check` scripts to `package.json` yourself)"
+    },
+    "cpp": {
+      "summary": "`.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files"
+    },
+    "dotnet": {
+      "summary": "Full `.editorconfig` with .NET and C# code style rules"
+    },
+    "rust": {
+      "summary": "`rustfmt.toml` and a Rust workflow with `fmt`, `clippy` and `test` jobs (stable toolchain from the runner's rustup, warnings denied, `--locked`). Needs a committed `Cargo.lock`"
+    }
+  },
+  "agentic-config": {
+    "agentic": {
+      "summary": "Coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity from one source: a short `AGENTS.md` skeleton, five read-only subagent roles generated with rulesync, `delegate` and `progress-notes` skills shared through symlinks, and an Agent Config check workflow. See [Agentic Configuration](docs/agentic-config.md)"
+    },
+    "agentic-powerpack": {
+      "summary": "Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`",
+      "needs": ["agentic"]
+    }
+  }
+}

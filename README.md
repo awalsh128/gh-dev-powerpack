@@ -42,6 +42,8 @@ remote. Override them with `OWNER=`, `REPO=` and `MAINTAINER=`.
 
 Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.sh`.
 
+<!-- sets:start -->
+
 ### `core`
 
 | Set | What it adds |
@@ -53,8 +55,8 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus branch rulesets for `main` and `staging`; needs `common` (`require-ci-success`) and `npm-publish` (`release.yml`), and a `ci.yml` that runs on pushes to `staging` |
-| `npm-publish` | `release.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing; needs `node` and `release-flow` |
+| `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus branch rulesets for `main` and `staging`; you also supply a `ci.yml` that runs on pushes to `staging`; needs `common`, `npm-publish` |
+| `npm-publish` | `release.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing; needs `node`, `release-flow` |
 | `npm-pages` | `typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases; needs `npm-publish` |
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks); needs `node` |
 
@@ -72,7 +74,11 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 | Set | What it adds |
 | --- | --- |
 | `agentic` | Coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity from one source: a short `AGENTS.md` skeleton, five read-only subagent roles generated with rulesync, `delegate` and `progress-notes` skills shared through symlinks, and an Agent Config check workflow. See [Agentic Configuration](docs/agentic-config.md) |
-| `agentic-powerpack` | Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`. Needs `agentic` |
+| `agentic-powerpack` | Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`; needs `agentic` |
+
+<!-- sets:end -->
+
+_These tables are generated from [`templates/sets.json`](templates/sets.json); edit it and run `scripts/check-docs.sh --fix`._
 
 After bootstrapping, edit:
 
@@ -105,6 +111,7 @@ After bootstrapping, edit:
 | `scripts/setup_npm_publish.sh` | Publish a placeholder npm package (public and deprecated, or private with `-p`) and register its trusted publisher with `npm trust`; prints the npmjs.com steps |
 | `scripts/setup_github_pages.sh` | Turn on Pages with GitHub Actions as the source, let `main` deploy to the `github-pages` environment, and set the repository website |
 | `scripts/setup_vscode_extension_publish.sh` | Create the Open VSX namespace and publish a placeholder version; prints the Marketplace and Open VSX trusted publishing steps with your values |
+| `scripts/check-docs.sh` | Check that the README, docs, scripts and templates agree (set list, `needs`, links, script mentions); `--fix` regenerates the README set tables from `templates/sets.json` |
 | `scripts/safe_fetch_exec.sh` | Safer replacement for `curl \| bash`: download over HTTPS, check the SHA-256 the publisher lists, then run (`--dry-run` to read it first). Cite the published hash in a repo's install docs; see [Installing from a script](docs/safe-install.md) |
 
 ## Sources
