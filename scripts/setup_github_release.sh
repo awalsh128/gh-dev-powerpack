@@ -25,12 +25,7 @@ done
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="${repo:-$(gh repo view --json nameWithOwner --jq .nameWithOwner)}"
 
-step() { printf '\n==> %s\n' "$*"; }
-run() {
-  echo "+ $*"
-  "$dry_run" || "$@"
-}
-manual() { printf '\n[MANUAL] %s\n' "$*"; }
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 echo "Repository: $repo"
 default_branch="$(gh api "repos/$repo" --jq .default_branch)"

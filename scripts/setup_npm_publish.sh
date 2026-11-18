@@ -37,12 +37,7 @@ if ! "$dry_run" && [[ ! -t 0 ]]; then
   exit 1
 fi
 
-step() { printf '\n==> %s\n' "$*"; }
-run() {
-  echo "+ $*"
-  "$dry_run" || "$@"
-}
-manual() { printf '\n[MANUAL] %s\n' "$*"; }
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 if [[ ! -f "$dir/package.json" ]]; then
   echo "No package.json in $dir." >&2
