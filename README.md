@@ -62,7 +62,7 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations; add `prettier` and `format`/`format:check` scripts to `package.json` yourself) |
+| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations, a `.lintstagedrc.json` and `.husky/pre-commit` that format staged files; add `prettier`, `husky`, `lint-staged` and `format`/`format:check` scripts to `package.json` yourself, and run `npm run format:check` in CI) |
 | `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
 | `rust` | `rustfmt.toml` and a Rust workflow with `fmt`, `clippy` and `test` jobs (stable toolchain from the runner's rustup, warnings denied, `--locked`). Needs a committed `Cargo.lock` |
