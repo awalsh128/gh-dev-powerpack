@@ -1,14 +1,14 @@
 name: Agentic Template
 
-# Keeps templates/agentic consistent: the generated subagent files must match .rulesync/, and a
+# Keeps templates/agentic-config/agentic consistent: the generated subagent files must match .rulesync/, and a
 # bootstrapped repo must get the skill symlinks and valid skills, including the skill the
 # vscode-extension set adds. Fix a generate failure with:
-#   cd templates/agentic && npx -y rulesync@<RULESYNC_VERSION> generate
+#   cd templates/agentic-config/agentic && npx -y rulesync@<RULESYNC_VERSION> generate
 on:
   pull_request:
     paths:
-      - templates/agentic/**
-      - templates/vscode-extension/.agents/**
+      - templates/agentic-config/agentic/**
+      - templates/release/vscode-extension/.agents/**
       - bootstrap.sh
       - gh-dev-powerpack
       - .github/workflows/agentic-template.yml
@@ -28,7 +28,7 @@ jobs:
       # The template's own workflow is the single place these versions are pinned.
       - name: Read tool pins from the template workflow
         run: |
-          workflow=templates/agentic/.github/workflows/agent-config.yml
+          workflow=templates/agentic-config/agentic/.github/workflows/agent-config.yml
           for key in RULESYNC_VERSION SKILLS_REF; do
             value="$(sed -n "s/^  $key: //p" "$workflow")"
             if [[ -z "$value" ]]; then
@@ -47,7 +47,7 @@ jobs:
         uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
 
       - name: Check generated subagents are up to date
-        working-directory: templates/agentic
+        working-directory: templates/agentic-config/agentic
         run: npx -y "rulesync@$RULESYNC_VERSION" generate --check
 
       - name: Bootstrap into a new repo

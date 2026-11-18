@@ -40,18 +40,37 @@ remote. Override them with `OWNER=`, `REPO=` and `MAINTAINER=`.
 
 ## Template sets
 
+Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.sh`.
+
+### `core`
+
 | Set | What it adds |
 | --- | --- |
 | `common` | `.editorconfig`, issue forms (bug, feature, contact links), PR template, Dependabot for pinned actions, `labels.yaml` with a Sync Labels workflow (crazy-max/ghaction-github-labeler; dry run on PRs, never deletes), Issue Triage workflow (assign maintainer, label untemplated issues), CodeQL workflow, `require-ci-success` composite action |
 | `conventional-commits` | `commitlint.config.mjs`, husky `commit-msg` hook, Commit Lint workflow that checks every PR commit (wagoid/commitlint-github-action) and the PR title (amannn/action-semantic-pull-request) |
+
+### `release`
+
+| Set | What it adds |
+| --- | --- |
 | `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus branch rulesets for `main` and `staging`; needs `common` (`require-ci-success`) and `npm-publish` (`release.yml`), and a `ci.yml` that runs on pushes to `staging` |
-| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings; add `prettier` and `format`/`format:check` scripts to `package.json` yourself) |
 | `npm-publish` | `release.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing; needs `node` and `release-flow` |
 | `npm-pages` | `typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases; needs `npm-publish` |
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks); needs `node` |
+
+### `languages`
+
+| Set | What it adds |
+| --- | --- |
+| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings; add `prettier` and `format`/`format:check` scripts to `package.json` yourself) |
 | `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
 | `rust` | `rustfmt.toml` and a Rust workflow with `fmt`, `clippy` and `test` jobs (stable toolchain from the runner's rustup, warnings denied, `--locked`). Needs a committed `Cargo.lock` |
+
+### `agentic-config`
+
+| Set | What it adds |
+| --- | --- |
 | `agentic` | Coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity from one source: a short `AGENTS.md` skeleton, five read-only subagent roles generated with rulesync, `delegate` and `progress-notes` skills shared through symlinks, and an Agent Config check workflow. See [Agentic Configuration](docs/agentic-config.md) |
 | `agentic-powerpack` | Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`. Needs `agentic` |
 
@@ -65,7 +84,7 @@ After bootstrapping, edit:
 
 ## Publishing guides
 
-- [GitHub setup for releases](docs/github-release-setup.md): `staging`, the release-bot app, the
+- [GitHub setup for releases](docs/github-release-setup.md): `staging`, the Octo STS app, the
   `release` environment, and rulesets.
 - [Publishing an npm package](docs/npm-publishing.md): npmjs.com account, first version, and trusted
   publisher.
@@ -80,7 +99,8 @@ After bootstrapping, edit:
 | --- | --- |
 | `scripts/gh_auth.sh` | Log in with `gh`, make git use it for credentials, and export `GITHUB_TOKEN` (source it) |
 | `scripts/install_pre_commit.sh` | Install pre-commit and the repo's hooks |
-| `scripts/apply_rulesets.sh` | Create or update branch rulesets from JSON; `-a <app-id>` lets a release-bot app bypass `main` |
+| `scripts/apply_rulesets.sh` | Create or update branch rulesets from JSON; `-a <app-id>` lets the Octo STS app bypass `main` |
+| `scripts/setup_github_release.sh` | Create the `release` environment (main and staging only), check the Octo STS trust policies are on the default branch, and apply the rulesets with the Octo STS app allowed to bypass `main`; prints the app install step |
 | `scripts/agentic-eval/` | Replays past fixes with and without the `agentic` set in Claude Code headless, and scores them against the fixes' own tests. See its [README](scripts/agentic-eval/README.md) |
 | `scripts/setup_npm_publish.sh` | Publish a placeholder npm package (public and deprecated, or private with `-p`) and register its trusted publisher with `npm trust`; prints the npmjs.com steps |
 | `scripts/setup_github_pages.sh` | Turn on Pages with GitHub Actions as the source, let `main` deploy to the `github-pages` environment, and set the repository website |

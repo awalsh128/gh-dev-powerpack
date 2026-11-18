@@ -143,4 +143,4 @@ and `release.config.cjs` only publishes on `main` anyway.
 - **Provenance error about the repository:** `repository.url` in `package.json` doesn't match the
   GitHub repository.
 - **`Cannot create ref due to creations being restricted`:** the tag was pushed with `GITHUB_TOKEN`,
-  or the release-bot app isn't installed on the repository.
+  or the Octo STS app isn't installed on the repository.

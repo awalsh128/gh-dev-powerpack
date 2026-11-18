@@ -184,5 +184,5 @@ already has the version.
   a published version, and that `publisher` matches the namespace's case.
 - **`Tag the last published version before publishing a pre-release`:** the first run must be a
   release, so pre-releases have a version to follow.
-- **`Cannot create ref due to creations being restricted`:** the release-bot app isn't installed on
+- **`Cannot create ref due to creations being restricted`:** the Octo STS app isn't installed on
   the repository.

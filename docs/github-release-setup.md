@@ -1,8 +1,11 @@
 # GitHub Setup for Releases
 
-The `release-flow`, `npm-publish` and `vscode-extension` sets share one GitHub setup: a release-bot
-app that can push to `main` and push tags, a `release` environment that publishing is bound to, and
+The `release-flow`, `npm-publish` and `vscode-extension` sets share one GitHub setup: Octo STS
+tokens that can push to `main` and push tags, a `release` environment that publishing is bound to, and
 branch rulesets. Do this once per repository.
+
+`scripts/setup_github_release.sh` does the environment, trust policy check and rulesets below from the
+command line (add `-n` for a dry run); you still install the Octo STS app yourself.
 
 ## Branches
 
@@ -16,34 +19,25 @@ gh repo edit --default-branch staging
 `main` only ever fast-forwards to a commit already on `staging` (`promote.yml`), and releases never
 commit, so `main` stays an ancestor of `staging`.
 
-## Release-bot GitHub App
+## Octo STS
 
-The default `GITHUB_TOKEN` can't bypass the `main` ruleset or create tags that a ruleset restricts,
-so the workflows use a GitHub App token.
+The default `GITHUB_TOKEN` can't bypass the `main` ruleset or create tags that a ruleset restricts.
+Instead of a GitHub App of your own, with a private key stored as a secret, the workflows use
+[Octo STS](https://github.com/octo-sts/app): a GitHub App that exchanges a workflow's OIDC token for
+a short-lived installation token, as a trust policy in your repository allows. No key or token is
+stored.
 
-1. Open **Settings → Developer settings → GitHub Apps → New GitHub App** for your account
-   (<https://github.com/settings/apps/new>), or the organization's equivalent.
-2. Enter a **GitHub App name** (such as `my-name-release-bot`) and a **Homepage URL** (the
-   repository URL is fine).
-3. Under **Webhook**, clear **Active**.
-4. Under **Repository permissions**, set **Contents** to **Read and write**. Leave everything else
-   at **No access**.
-5. Under **Where can this GitHub App be installed?**, choose **Only on this account**, then **Create
-   GitHub App**.
-6. Note the **App ID** on the app's page. Under **Private keys**, select **Generate a private key**;
-   a `.pem` file downloads.
-7. Select **Install App**, choose the account, then **Only select repositories** and pick the
-   repository.
-
-Store the credentials on the repository (the workflows read `vars.RELEASE_BOT_APP_ID` and
-`secrets.RELEASE_BOT_PK`):
-
-```bash
-gh variable set RELEASE_BOT_APP_ID --body "<app id>"
-gh secret set RELEASE_BOT_PK < my-release-bot.private-key.pem
-```
-
-Delete the `.pem` file afterwards.
+1. Install the [Octo STS app](https://github.com/apps/octo-sts) on the repository (**Only select
+   repositories**).
+2. Bootstrap adds the trust policies, with your owner and repository filled in, to the default
+   branch (Octo STS reads them from there):
+   - `.github/chainguard/release-promote.sts.yaml` (`release-flow`): `promote.yml` on `staging` may
+     get a token with `contents: write` to push `main`.
+   - `.github/chainguard/release-tag.sts.yaml` (`npm-publish`, `vscode-extension`): the release
+     workflow, in the `release` environment on `main` or `staging`, may get a token with
+     `contents: write` to push tags.
+3. Allow the app to bypass `main`'s ruleset (see [Rulesets](#rulesets)). Its app ID is public:
+   `gh api /apps/octo-sts --jq .id` (801323).
 
 ## Release Environment
 
@@ -55,17 +49,14 @@ The npm, Marketplace and Open VSX trusted publishers are bound to the `release` 
 2. Under **Deployment branches and tags**, choose **Selected branches and tags** and add the rules
    `main` and `staging`.
 
-Environment jobs still see the repository variable and secret above. For tighter scoping, move them
-into the `release` environment and add a `promote` environment for `promote.yml`.
-
 ## Rulesets
 
 `release-flow` adds `.github/rulesets/main.json` and `staging.json`. Edit the required status check
-names in `staging.json` to match your CI job names, then apply them with the app allowed to bypass
-`main`:
+names in `staging.json` to match your CI job names, then apply them with the Octo STS app allowed to
+bypass `main`:
 
 ```bash
-scripts/apply_rulesets.sh -a "<app id>"
+scripts/apply_rulesets.sh -a "$(gh api /apps/octo-sts --jq .id)"
 ```
 
 ## CI

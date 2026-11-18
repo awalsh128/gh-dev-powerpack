@@ -5,7 +5,7 @@ skills, CI, first evaluation) and phase 7 (README and guide) done.
 
 ## Goal
 
-A new template set, `templates/agentic/`, that gives any repo one source of truth for coding-agent
+A new template set, `templates/agentic-config/agentic/`, that gives any repo one source of truth for coding-agent
 configuration. It should keep the baseline context small, use narrowly scoped read-only roles,
 and follow orchestration rules that hold across Claude Code, Codex CLI, GitHub Copilot and
 Google's Gemini/Antigravity CLI.
@@ -89,10 +89,10 @@ Role conventions:
    source; skills-ref passes both skills and rejects a bad name. The workflow hasn't been linted
    (no actionlint).
    - In this repo, `.github/workflows/agentic-template.yml` runs the same check against
-     `templates/agentic/`. It also bootstraps the set into a new repo, checks that the skill
+     `templates/agentic-config/agentic/`. It also bootstraps the set into a new repo, checks that the skill
      symlinks survive, and validates the skills. It reads `RULESYNC_VERSION` and `SKILLS_REF`
      from the template's workflow, so those are pinned in one place. After editing a role, run
-     `cd templates/agentic && npx -y rulesync@43.4.1 generate`.
+     `cd templates/agentic-config/agentic && npx -y rulesync@43.4.1 generate`.
 6. ~~Evaluate~~ (partly done, 2026-11-14). See [Evaluation](#evaluation-2026-11-14) below.
 7. ~~Wire up~~ (done): README template-set row and after-bootstrap step, plus the
    [Agentic Configuration](agentic-config.md) guide.
