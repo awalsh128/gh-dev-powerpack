@@ -24,11 +24,7 @@ done
 shift $((OPTIND - 1))
 dir="$(cd "${1:-.}" && pwd)"
 
-step() { printf '\n==> %s\n' "$*"; }
-run() {
-  echo "+ $*"
-  "$dry_run" || "$@"
-}
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 remote="$(git -C "$dir" remote get-url origin)"
 slug="$(sed -E 's#^(https://github.com/|git@github.com:)##; s#\.git$##' <<<"$remote")"

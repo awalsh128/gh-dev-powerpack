@@ -37,12 +37,7 @@ VSCE="@vscode/vsce@4.1.0"
 OVSX="ovsx@1.3.0"
 OPEN_VSX="https://open-vsx.org"
 
-step() { printf '\n==> %s\n' "$*"; }
-run() {
-  echo "+ $*"
-  "$dry_run" || "$@"
-}
-manual() { printf '\n[MANUAL] %s\n' "$*"; }
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 pause() {
   "$dry_run" && return
   read -r -p "Press Enter when done... " _
