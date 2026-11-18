@@ -27,7 +27,7 @@
   },
   "languages": {
     "node": {
-      "summary": "Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations; add `prettier` and `format`/`format:check` scripts to `package.json` yourself)"
+      "summary": "Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations, a `.lintstagedrc.json` and `.husky/pre-commit` that format staged files; add `prettier`, `husky`, `lint-staged` and `format`/`format:check` scripts to `package.json` yourself, and run `npm run format:check` in CI)"
     },
     "cpp": {
       "summary": "`.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files"
