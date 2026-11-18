@@ -25,6 +25,11 @@ env:
   RULESYNC_VERSION: 43.4.1
   SKILLS_REF: git+https://github.com/agentskills/agentskills@83021e2be457a9b6679148719c1f6074f0ad975e#subdirectory=skills-ref
 
+# A new push to a PR supersedes its running checks; other runs are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   subagents:
     runs-on: ubuntu-latest
