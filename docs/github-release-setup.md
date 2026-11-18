@@ -49,6 +49,20 @@ The npm, Marketplace and Open VSX trusted publishers are bound to the `release` 
 2. Under **Deployment branches and tags**, choose **Selected branches and tags** and add the rules
    `main` and `staging`.
 
+## Immutable Releases
+
+Turn on immutable releases so a published release's tag and assets can't be changed or deleted, and
+GitHub attaches a signed attestation to it. `setup_github_release.sh` does this; by hand it is
+**Settings → General → Releases → Enable release immutability**, or:
+
+```bash
+gh api -X PUT repos/OWNER/REPO/immutable-releases
+```
+
+It applies to releases published after it is on. `@semantic-release/github` uploads assets to a
+draft and publishes it afterwards, so the workflows work unchanged; any step that edits assets or
+moves the tag after publishing will fail. Release notes and the pre-release flag stay editable.
+
 ## Rulesets
 
 `release-flow` adds `.github/rulesets/main.json` and `staging.json`. Edit the required status check
