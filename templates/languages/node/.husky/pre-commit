@@ -1,0 +1,2 @@
+# Formats staged files with Prettier. Add linters to .lintstagedrc.json as needed.
+npx --no -- lint-staged
