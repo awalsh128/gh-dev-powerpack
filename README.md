@@ -2,7 +2,7 @@
   <img src="docs/assets/logo.svg" alt="gh-dev-powerpack logo" width="128" height="128">
 </p>
 
-# Github Dev Powerpack
+# GitHub Dev Powerpack
 
 Powerpack for developing code and managing CI/CD (GitHub currently). This repo has generic helper code and templates
 to quickly bootstrap new projects and to raise the quality of existing ones.
@@ -62,7 +62,7 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings; add `prettier` and `format`/`format:check` scripts to `package.json` yourself) |
+| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations; add `prettier` and `format`/`format:check` scripts to `package.json` yourself) |
 | `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
 | `rust` | `rustfmt.toml` and a Rust workflow with `fmt`, `clippy` and `test` jobs (stable toolchain from the runner's rustup, warnings denied, `--locked`). Needs a committed `Cargo.lock` |
@@ -100,7 +100,7 @@ After bootstrapping, edit:
 | `scripts/gh_auth.sh` | Log in with `gh`, make git use it for credentials, and export `GITHUB_TOKEN` (source it) |
 | `scripts/install_pre_commit.sh` | Install pre-commit and the repo's hooks |
 | `scripts/apply_rulesets.sh` | Create or update branch rulesets from JSON; `-a <app-id>` lets the Octo STS app bypass `main` |
-| `scripts/setup_github_release.sh` | Create the `release` environment (main and staging only), check the Octo STS trust policies are on the default branch, and apply the rulesets with the Octo STS app allowed to bypass `main`; prints the app install step |
+| `scripts/setup_github_release.sh` | Create the `release` environment (main and staging only), turn on immutable releases, check the Octo STS trust policies are on the default branch, and apply the rulesets with the Octo STS app allowed to bypass `main`; prints the app install step |
 | `scripts/agentic-eval/` | Replays past fixes with and without the `agentic` set in Claude Code headless, and scores them against the fixes' own tests. See its [README](scripts/agentic-eval/README.md) |
 | `scripts/setup_npm_publish.sh` | Publish a placeholder npm package (public and deprecated, or private with `-p`) and register its trusted publisher with `npm trust`; prints the npmjs.com steps |
 | `scripts/setup_github_pages.sh` | Turn on Pages with GitHub Actions as the source, let `main` deploy to the `github-pages` environment, and set the repository website |
