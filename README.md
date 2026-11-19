@@ -51,7 +51,7 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `common` | `.editorconfig`, issue forms (bug, feature, contact links), PR template, Dependabot for pinned actions, `labels.yaml` with a Sync Labels workflow (crazy-max/ghaction-github-labeler; dry run on PRs, never deletes), Issue Triage workflow (assign maintainer, label untemplated issues), CodeQL workflow, `require-ci-success` composite action |
+| `common` | `.editorconfig`, `SECURITY.md`, issue forms (bug, feature, contact links), PR template, Dependabot for pinned actions, `labels.yaml` with a Sync Labels workflow (crazy-max/ghaction-github-labeler; dry run on PRs, never deletes), Issue Triage workflow (assign maintainer, label untemplated issues), CodeQL workflow, `require-ci-success` composite action |
 | `conventional-commits` | `commitlint.config.mjs`, husky `commit-msg` hook, Commit Lint workflow that checks every PR commit (wagoid/commitlint-github-action) and the PR title (amannn/action-semantic-pull-request) |
 
 ### `release`
