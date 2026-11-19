@@ -61,6 +61,34 @@ It applies to releases published after it is on. `@semantic-release/github` uplo
 publishes it afterwards, so the workflows work unchanged; any step that edits assets or moves the tag after
 publishing will fail. Release notes and the pre-release flag stay editable.
 
+## Release Switch
+
+`release.yml` runs its job only when the repository variable `RELEASES_ENABLED` is not `false`, and a dry run
+always runs. Every route to a release (a `staging` push, `promote.yml`, a manual run) goes through that job,
+so one variable holds them all. Hold releases while a repository settles with
+`gh variable set RELEASES_ENABLED --body false`, and release again with `--body true` (or delete the
+variable). A release job that merely fails is not a hold: with no tags, every `staging` push plans
+`1.0.0-rc.1`.
+
+## Major Releases
+
+`promote.yml` takes an optional `confirm-major` input. When the latest candidate on `staging` starts a new
+major version, or is the first official release, the run stops unless `confirm-major` is that version (for
+example `2.0.0`). There is no maintenance branch, so a major leaves users of the previous one without fixes.
+It reads the `vX.Y.Z` and `vX.Y.Z-rc.N` tags, so it assumes the default tag format.
+
+## Repository Settings
+
+For a public repository, also:
+
+- Add a `SECURITY.md` (the `common` set has one) and turn on private vulnerability reporting, which
+  `setup_github_release.sh` does: `gh api -X PUT repos/OWNER/REPO/private-vulnerability-reporting`.
+- Turn on **Require actions to be pinned to a full-length commit SHA** (Settings → Actions → General), or
+  `gh api -X PUT repos/OWNER/REPO/actions/permissions -F enabled=true -f allowed_actions=all -F sha_pinning_required=true`.
+  Do it after every workflow pins its actions, or the unpinned ones stop running.
+- Merging a changed `.github/rulesets/*.json` applies nothing; apply it, then compare the live ruleset with
+  the file.
+
 ## Rulesets
 
 `release-flow` adds `.github/rulesets/main.json` and `staging.json`. Edit the required status check names in

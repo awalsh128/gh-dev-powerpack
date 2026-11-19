@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Sets up a repository for the release-flow, npm-publish and vscode-extension sets with Octo STS:
-# creates the 'release' environment (main and staging only), turns on immutable releases, checks that
+# creates the 'release' environment (main and staging only), turns on immutable releases and, for a public
+# repository, private vulnerability reporting, checks that
 # the Octo STS trust policies are on the default branch, and applies the rulesets with the Octo STS
 # app allowed to bypass main. Prints the step only the website can do (installing the app). Safe to rerun.
 #
@@ -51,6 +52,15 @@ if [[ "$(gh api "repos/$repo/immutable-releases" --jq .enabled 2>/dev/null || ec
   echo "Already enabled."
 else
   run gh api -X PUT "repos/$repo/immutable-releases" --silent
+fi
+
+step "Private vulnerability reporting (public repositories; SECURITY.md links to it)"
+if [[ "$(gh api "repos/$repo" --jq .private)" == "true" ]]; then
+  echo "Private repository; skipped."
+elif [[ "$(gh api "repos/$repo/private-vulnerability-reporting" --jq .enabled 2>/dev/null || echo false)" == "true" ]]; then
+  echo "Already enabled."
+else
+  run gh api -X PUT "repos/$repo/private-vulnerability-reporting" --silent
 fi
 
 step "Octo STS trust policies on $default_branch"

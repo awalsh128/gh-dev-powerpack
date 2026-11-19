@@ -37,6 +37,10 @@ env:
 
 jobs:
   release:
+    # Off switch for every route to a release: a staging push, promote and a manual run all go through
+    # this job. Set the repository variable RELEASES_ENABLED to 'false' to hold releases (Settings >
+    # Secrets and variables > Actions > Variables). A dry run publishes nothing, so it is always allowed.
+    if: ${{ vars.RELEASES_ENABLED != 'false' || inputs.dry-run }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: release
