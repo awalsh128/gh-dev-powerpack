@@ -14,7 +14,13 @@ const fs = require("fs");
 const DOCS_DIR = "docs/api";
 const hasDocs = fs.existsSync(`${__dirname}/typedoc.json`);
 
-module.exports = {
+// release-preview.yml sets RELEASE_PREVIEW for its pull request dry run. A dry run still verifies every
+// plugin, so it keeps only those that plan the version and notes; it has no npm or GitHub release access.
+const PREVIEW_PLUGINS = ["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator"];
+const isPreview = process.env.RELEASE_PREVIEW === "true";
+const pluginName = (plugin) => (Array.isArray(plugin) ? plugin[0] : plugin);
+
+const config = {
   branches: [
     // Release candidates, such as 1.1.0-rc.1: a tag and GitHub prerelease, not published to npm.
     { name: "staging", prerelease: "rc" },
@@ -51,3 +57,7 @@ module.exports = {
     "@semantic-release/github",
   ],
 };
+
+module.exports = isPreview
+  ? { ...config, plugins: config.plugins.filter((plugin) => PREVIEW_PLUGINS.includes(pluginName(plugin))) }
+  : config;

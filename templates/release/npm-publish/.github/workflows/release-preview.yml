@@ -1,0 +1,109 @@
+name: Release Preview
+
+# Comments on each pull request to staging with the release candidate that merging it would cut: the version
+# and the release notes. It squash-merges the pull request into staging locally, with its title as the commit
+# subject (as the real merge does), and runs semantic-release in dry-run mode on the result. Nothing is
+# pushed, tagged or published, and the comment is updated in place on each push.
+#
+# Trusts: only staging. pull_request_target runs this file and release.config.cjs as they are on staging, and
+# the pull request's commits are read as git history only: its files are reset to staging's before
+# semantic-release runs, so none of its code or config runs. That is what makes the write token safe, and
+# lets pull requests from forks get a preview. The token can write contents because semantic-release checks
+# it could push even in a dry run; nothing is pushed, and branch and tag rulesets still stop it changing
+# staging, main or release tags. Never run the pull request's files in this job.
+on:
+  pull_request_target:
+    branches: [staging]
+    types: [opened, synchronize, reopened, edited] # edited: the title is the release commit subject
+
+permissions: {}
+
+concurrency:
+  # github.ref is staging for every pull_request_target run, so group by pull request.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true # Only the latest push's preview matters
+
+env:
+  # Keep in step with PACKAGE_DIR and the pinned tool versions in release.yml.
+  PACKAGE_DIR: "."
+
+jobs:
+  preview:
+    # Dependabot's runs get a read-only token, which can't comment.
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # For semantic-release's push check (git push --dry-run); nothing is pushed
+      pull-requests: write # For the preview comment
+    steps:
+      - name: Checkout staging
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.base_ref }}
+          fetch-depth: 0 # semantic-release reads every commit and tag since the last release
+          persist-credentials: false
+
+      # The squash commit gives semantic-release the pull request's title and changed paths (which
+      # semantic-release-monorepo filters on); restoring staging's files afterwards means the config and
+      # package.json it reads are staging's. Git runs no code from the merged files.
+      - name: Squash-merge the pull request locally
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git -c http.extraheader="AUTHORIZATION: basic $auth" fetch --quiet --no-tags origin \
+            "refs/pull/$PR_NUMBER/head"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git merge --squash "$HEAD_SHA"
+          git commit --quiet --allow-empty --no-verify --message "$TITLE"
+          git restore --source=HEAD~1 --staged --worktree -- .
+
+      # Dry runs still verify every plugin, so RELEASE_PREVIEW makes release.config.cjs keep only the plugins
+      # that compute the version and notes; npm trusted publishing and the GitHub release aren't available here.
+      # semantic-release refuses to run on a pull request in CI, so unset_gha_env and ci: false run it as a
+      # local dry run on the staging branch.
+      - name: Preview with semantic-release
+        id: semantic-release
+        uses: cycjimmy/semantic-release-action@ad51787758d9654d5a75150a89a6fa9b3ccef95e # v8.1.4
+        with:
+          semantic_version: 25.0.9
+          extra_plugins: |
+            conventional-changelog-conventionalcommits@9.3.1
+            ${{ env.PACKAGE_DIR != '.' && 'semantic-release-monorepo@8.0.2' || '' }}
+          extends: ${{ env.PACKAGE_DIR != '.' && 'semantic-release-monorepo' || '' }}
+          working_directory: ${{ env.PACKAGE_DIR }}
+          dry_run: true
+          ci: false
+          unset_gha_env: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_PREVIEW: "true"
+
+      - name: Comment the planned release
+        if: ${{ steps.semantic-release.outputs.new_release_version != '' }}
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: release-preview
+          message: |
+            ### Release preview: `${{ steps.semantic-release.outputs.new_release_git_tag }}`
+
+            Merging this pull request releases this candidate on `staging` (last release: `${{ steps.semantic-release.outputs.last_release_version || 'none' }}`).
+
+            ${{ steps.semantic-release.outputs.new_release_notes }}
+
+      - name: Comment that nothing would be released
+        if: ${{ steps.semantic-release.outputs.new_release_version == '' }}
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: release-preview
+          message: |
+            ### Release preview: no release
+
+            Merging this pull request releases nothing: no commit since `${{ steps.semantic-release.outputs.last_release_version || 'the start' }}` is a `feat`, `fix` or breaking change. A `chore:`, `docs:`, `ci:` or similar title is expected to do this.
