@@ -9,10 +9,16 @@ Closes #
 Use the matching Conventional Commits prefix in the PR title (`fix:`, `feat:`, `docs:`, `refactor:`,
 `perf:`, `test:`, `build:`, `ci:`, `chore:`), and add `!` for a breaking change.
 
-- [ ] `fix`: bug fix (patch)
+- [ ] `fix` or `perf`: bug fix or speedup (patch)
 - [ ] `feat`: new feature (minor)
-- [ ] `docs`, `refactor`, `perf`, `test`, `build`, `ci` or `chore`: no release on its own
-- [ ] Breaking change (`!` or `BREAKING CHANGE:` footer)
+- [ ] `docs`, `refactor`, `test`, `build`, `ci` or `chore`: no release on its own
+
+**Breaking change:** yes / no
+
+Answer even when the answer is no. It's breaking if anyone using this has to change something after
+upgrading: a removed or renamed export, input, output, CLI flag or config key, a changed default or behavior
+they rely on, or a raised minimum runtime version (`engines`, Node). If yes, add `!` to the title (`feat!:`)
+and a `BREAKING CHANGE:` footer saying what users must change.
 
 ## Implementation notes
 
