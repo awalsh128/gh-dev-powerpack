@@ -13,6 +13,7 @@ on:
       - .codex/**
       - .github/agents/**
       - .github/skills
+      - skills-lock.json
       - .github/workflows/agent-config.yml
   push:
     branches: [main]
@@ -62,6 +63,19 @@ jobs:
               exit 1
             fi
           done
+
+      # Skills installed with `npx skills add` are recorded in skills-lock.json; its copy must be committed.
+      - name: Check installed skills match skills-lock.json
+        run: |
+          [[ -f skills-lock.json ]] || exit 0
+          status=0
+          for name in $(jq -r '.skills | keys[]' skills-lock.json); do
+            if [[ ! -f ".agents/skills/$name/SKILL.md" ]]; then
+              echo "::error file=skills-lock.json::$name is in skills-lock.json but .agents/skills/$name/ is not committed"
+              status=1
+            fi
+          done
+          exit "$status"
 
       - name: Validate skills
         run: |

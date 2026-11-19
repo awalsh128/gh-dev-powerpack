@@ -40,6 +40,10 @@ before starting one, and the `progress-notes` skill for work that spans sessions
   `.github/copilot-instructions.md` point to it; never add rules to them.
 - Skills: `.agents/skills/` only. `.claude/skills` and `.github/skills` are symlinks to it.
 - Roles: `.rulesync/subagents/` only. Every other role directory is generated output.
+- Third-party skills and plugins: install them for the repo, not just for you. Run `npx skills add`
+  from the repo root and commit `.agents/skills/<name>/` with `skills-lock.json`; install Claude Code
+  plugins with `--scope project` and commit `.claude/settings.json`. Commit any hook script that
+  settings file runs.
 
 ## More context
 

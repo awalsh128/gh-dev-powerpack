@@ -114,12 +114,24 @@ supports beyond Claude Code. Stars are left out because the most-starred results
 counts that don't look credible. Re-measure when you update a pack, by hand, with the same method.
 
 Install a pack as a plugin, which updates itself, or with [skills.sh](https://skills.sh), which copies
-editable files into the repo. Pick one per agent, or you get every skill twice. For mattpocock/skills on
-Claude Code:
+editable files into the repo. Pick one per agent, or you get every skill twice. Either way, record it in the
+repo; an install that only lives in your home directory is missing from the next clone or machine.
 
-```bash
-claude plugin install mattpocock-skills@claude-plugins-official
-```
+- **Plugin.** Install at project scope. That writes `extraKnownMarketplaces` and `enabledPlugins` to
+  `.claude/settings.json`; commit it, and Claude Code offers the plugin to anyone who trusts the repo. The
+  default user scope writes to `~/.claude/settings.json`, which the repo never sees. For mattpocock/skills:
+
+  ```bash
+  claude plugin install mattpocock-skills@claude-plugins-official --scope project
+  ```
+
+- **skills.sh.** Run `npx skills add <owner/repo> -s <skill>` from the repo root. It copies the skill into
+  `.agents/skills/` and records its source in `skills-lock.json`; commit both. Run from anywhere else, the
+  lock file lands in that directory instead. `npx skills experimental_install` restores from the lock and
+  `npx skills update -p -y` updates.
+
+If `.claude/settings.json` runs a hook script, commit the script too (under `.claude/hooks/`, called through
+`"$CLAUDE_PROJECT_DIR"`), or the hook fails on every other checkout.
 
 The [upstream README](https://github.com/mattpocock/skills#installation-30-second-setup) has the commands for
 Codex, Copilot and Gemini CLI. Skills installed as plugins live outside the repo, so they aren't part of what
@@ -156,6 +168,7 @@ The Agent Config workflow runs on PRs that touch agent config, and on pushes to 
 - `rulesync generate --check` fails when the generated roles don't match `.rulesync/`. Fix it by running
   `generate` and committing the result.
 - The skill symlinks must point at `../.agents/skills`.
+- Every skill in `skills-lock.json` must have its folder committed under `.agents/skills/`.
 - `skills-ref validate` checks every skill against the spec.
 
 Dependabot doesn't update the rulesync version (`RULESYNC_VERSION` in the workflow). Update it by hand,
