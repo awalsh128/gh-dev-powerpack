@@ -13,7 +13,7 @@
       "needs": ["common", "npm-publish"]
     },
     "npm-publish": {
-      "summary": "`release.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing",
+      "summary": "`release.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment)",
       "needs": ["node", "release-flow"]
     },
     "npm-pages": {

@@ -18,8 +18,9 @@ version and semantic-release writes the real one in the CI workspace.
 ./bootstrap.sh ~/repos/my-package common conventional-commits release-flow node npm-publish
 ```
 
-This adds `.github/workflows/release.yml`, `release.config.cjs`, the `setup` and `require-ci-success` actions,
-and `promote.yml`. Then complete [GitHub Setup for Releases](github-release-setup.md).
+This adds `.github/workflows/release.yml`, `.github/workflows/release-preview.yml`, `release.config.cjs`, the
+`setup` and `require-ci-success` actions, and `promote.yml`. Then complete
+[GitHub Setup for Releases](github-release-setup.md).
 
 ## Package
 
@@ -117,6 +118,28 @@ The caller must grant every permission `release.yml` asks for, including `pages:
 
 npm trusts `release.yml` only when it is the top-level workflow, which a call from `ci.yml` is not, and
 `release.config.cjs` only publishes on `main` anyway.
+
+## Release Preview
+
+`release-preview.yml` comments on each pull request to `staging` with the release candidate that merging it
+would cut: the version and its release notes, or a note that it releases nothing. It squash-merges the pull
+request into `staging` locally with its title as the commit subject, runs semantic-release in dry-run mode
+through [cycjimmy/semantic-release-action](https://github.com/cycjimmy/semantic-release-action), and keeps one
+comment up to date with
+[marocchino/sticky-pull-request-comment](https://github.com/marocchino/sticky-pull-request-comment).
+
+- It sets `RELEASE_PREVIEW=true`, so `release.config.cjs` keeps only the commit analyzer and release notes
+  generator: a dry run still verifies every plugin, and the npm and GitHub release plugins can't pass on a
+  pull request.
+- It runs on `pull_request_target`, so the workflow and `release.config.cjs` come from `staging`. The pull
+  request's commits are only read as history; its files are reset to `staging`'s before semantic-release runs,
+  so none of its code or config runs. Keep it that way: never build, install or run the pull request's files
+  in this workflow.
+- Its job token has `contents: write`, because semantic-release checks that it could push even in a dry run.
+  Nothing is pushed, and the rulesets still protect `staging`, `main` and the release tags.
+- Pull requests from forks get a preview too. Dependabot's get a read-only token, so the preview skips them.
+- A change to `release-preview.yml` or `release.config.cjs` shows up in previews once it is on `staging`.
+- Keep its `PACKAGE_DIR` and pinned versions in step with `release.yml`.
 
 ## Verify
 
