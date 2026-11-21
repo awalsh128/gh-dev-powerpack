@@ -32,7 +32,7 @@ This adds `.github/workflows/publish-extension.yml`, `release.config.cjs`,
 [GitHub Setup for Releases](github-release-setup.md). `release-flow` is optional, but without it, remove
 `staging` from the `release` environment's branches.
 
-`promote.yml` starts `release.yml` (the `npm-publish` set). For an extension-only repository, change its last
+`promote.yml` starts `publish.yml` (the `npm-publish` set). For an extension-only repository, change its last
 step to start nothing, or to `gh workflow run publish-extension.yml --ref main -f dry_run=false`.
 
 ## Extension

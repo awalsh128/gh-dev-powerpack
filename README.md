@@ -58,8 +58,8 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`; needs `common`, `npm-publish` |
-| `npm-publish` | `release.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment); needs `node`, `release-flow` |
+| `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `publish.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`; needs `common`, `npm-publish` |
+| `npm-publish` | `publish.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment); needs `node`, `release-flow` |
 | `npm-pages` | `typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases; needs `npm-publish` |
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks); needs `node` |
 

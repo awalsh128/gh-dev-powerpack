@@ -29,7 +29,7 @@ skill holds no template content, so read the live files every time.
    replacing them, and keep options that match tool defaults out unless the exemplar sets them.
 4. **Check dependencies.** Read the exemplar's header comments (`Requires:`, `Needs`) and the
    README row's "needs ..." note. Report any required file or set missing here (for example
-   `require-ci-success` from `common`, or `release.yml` from `npm-publish`) and offer to adapt it
+   `require-ci-success` from `common`, or `publish.yml` from `npm-publish`) and offer to adapt it
    too. Flag style mismatches with existing files (such as unpinned vs SHA-pinned actions) without
    changing the existing ones.
 5. **Do the manual steps the template can't.** `bootstrap.sh` only copies files, so handle things

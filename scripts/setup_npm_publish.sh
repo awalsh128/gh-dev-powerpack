@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Prepares an npm package for trusted publishing from the npm-publish set's release.yml: publishes a
+# Prepares an npm package for trusted publishing from the npm-publish set's publish.yml: publishes a
 # placeholder version 0.0.0 so the package exists (npm only configures trusted publishing on an
 # existing package), then registers the GitHub Actions trusted publisher with `npm trust`. Prints
 # the steps that can only be done on npmjs.com. Safe to rerun: steps already done are skipped.
@@ -8,7 +8,7 @@
 #   -n  Dry run: print what would be done.
 #   -p  Publish the placeholder as private (--access restricted). Needs a scoped name (@scope/name)
 #       and a paid npm plan. Without it, the placeholder is public and deprecated.
-#   -w  Workflow file name (default: release.yml).
+#   -w  Workflow file name (default: publish.yml).
 #   -e  GitHub environment name (default: release).
 # package-dir defaults to the current directory. The GitHub repo comes from its origin remote.
 # Needs npm 11.15.0 or later, two-factor authentication on your npm account, and an interactive
@@ -17,7 +17,7 @@ set -euo pipefail
 
 dry_run=false
 private=false
-workflow="release.yml"
+workflow="publish.yml"
 environment="release"
 while getopts "npw:e:h" opt; do
   case "$opt" in

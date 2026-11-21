@@ -1,7 +1,7 @@
 name: Release
 
 # Releases the npm package with semantic-release, always gated by CI:
-# - staging: start it on its own after CI passes (gh workflow run release.yml --ref staging), releasing a
+# - staging: start it on its own after CI passes (gh workflow run publish.yml --ref staging), releasing a
 #   candidate (e.g. 1.2.0-rc.1) as a tag and GitHub prerelease only. Never call it from another workflow:
 #   npm trusted publishing trusts this file only when it is started directly.
 # - main: promote.yml starts this after fast-forwarding main to a CI-passed staging commit,

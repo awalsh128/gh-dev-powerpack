@@ -17,7 +17,7 @@ The docs show the released version, and their source links point at the release 
 ```
 
 `npm-pages` only adds `typedoc.json`. The `npm-publish` set's `release.config.cjs` builds the docs when it
-finds `typedoc.json` next to it, and `release.yml` deploys them; without `typedoc.json` neither does anything.
+finds `typedoc.json` next to it, and `publish.yml` deploys them; without `typedoc.json` neither does anything.
 Finish [Publishing an npm Package](npm-publishing.md) first.
 
 ## Package
@@ -61,21 +61,22 @@ It:
 
 ## Release Candidates
 
-If `ci.yml` calls `release.yml` for release candidates, the calling job must grant every permission
-`release.yml` asks for, including the Pages ones, even though candidates never deploy:
+Release candidates never deploy docs. A `ci.yml` job that starts `publish.yml` on `staging` needs only
+`actions: write`; see [npm-publishing.md](npm-publishing.md#release-candidates):
 
 ```yaml
 release-candidate:
   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/staging' }}
   needs: [lint, test] # every other CI job
+  runs-on: ubuntu-latest
+  timeout-minutes: 5
   permissions:
-    actions: read
-    contents: write
-    issues: write
-    pull-requests: write
-    id-token: write
-    pages: write
-  uses: ./.github/workflows/release.yml
+    actions: write # Start the publish workflow
+  steps:
+    - name: Start release candidate
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh workflow run publish.yml --ref staging
 ```
 
 ## Verify
@@ -91,5 +92,3 @@ release-candidate:
   see [GitHub](#github).
 - **`Get Pages site failed` in Setup Pages:** Pages isn't turned on, or its source isn't GitHub Actions.
 - **`could not determine executable to run` for typedoc:** `typedoc` isn't in `devDependencies`.
-- **Workflow validation error about requested permissions:** the `ci.yml` job that calls `release.yml` doesn't
-  grant `pages: write` and `id-token: write`.

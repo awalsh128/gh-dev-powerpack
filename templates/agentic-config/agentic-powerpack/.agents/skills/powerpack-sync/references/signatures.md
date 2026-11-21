@@ -9,7 +9,7 @@ when none match.
 | `conventional-commits` | `commitlint.config.mjs` |
 | `release-flow` | `.github/workflows/promote.yml` |
 | `node` | `.github/actions/setup/action.yml` |
-| `npm-publish` | `release.config.cjs` with `.github/workflows/release.yml` |
+| `npm-publish` | `release.config.cjs` with `.github/workflows/publish.yml` |
 | `npm-pages` | `typedoc.json` |
 | `vscode-extension` | `.github/workflows/publish-extension.yml` |
 | `cpp` | `.clang-format` |
