@@ -12,7 +12,7 @@ name: Release
 # Requires (see docs/npm-publishing.md in gh-dev-powerpack):
 # - A 'release' environment that only main and staging can use.
 # - The Octo STS GitHub App installed on the repository, and the
-#   .github/chainguard/release-tag.sts.yaml trust policy on the default branch, so tags can be
+#   .github/chainguard/release.sts.yaml trust policy on the default branch, so tags can be
 #   pushed without a stored app key.
 # - An npm trusted publisher for this workflow file and the 'release' environment.
 # - .github/actions/setup (node set) and .github/actions/require-ci-success (common set).
@@ -86,7 +86,7 @@ jobs:
         uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
         with:
           scope: ${{ github.repository }}
-          identity: release-tag
+          identity: release
 
       # The release tools are pinned here rather than in package.json, so their dependencies don't
       # reach the project's audit.
