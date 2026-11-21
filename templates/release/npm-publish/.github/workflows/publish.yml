@@ -41,7 +41,7 @@ jobs:
     # this job. Set the repository variable RELEASES_ENABLED to 'false' to hold releases (Settings >
     # Secrets and variables > Actions > Variables). A dry run publishes nothing, so it is always allowed.
     if: ${{ vars.RELEASES_ENABLED != 'false' || inputs.dry-run }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: release
     outputs:
@@ -131,7 +131,7 @@ jobs:
   deploy-pages:
     needs: release
     if: ${{ github.ref == 'refs/heads/main' && needs.release.outputs.docs-dir != '' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     concurrency:
       group: pages
