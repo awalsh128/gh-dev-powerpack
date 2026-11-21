@@ -68,7 +68,7 @@ Release candidates never deploy docs. A `ci.yml` job that starts `publish.yml` o
 release-candidate:
   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/staging' }}
   needs: [lint, test] # every other CI job
-  runs-on: ubuntu-latest
+  runs-on: ubuntu-24.04
   timeout-minutes: 5
   permissions:
     actions: write # Start the publish workflow

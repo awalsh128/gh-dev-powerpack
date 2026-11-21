@@ -106,7 +106,7 @@ because npm trusts `publish.yml` only when it is the top-level workflow:
 release-candidate:
   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/staging' }}
   needs: [lint, test] # every other CI job
-  runs-on: ubuntu-latest
+  runs-on: ubuntu-24.04
   timeout-minutes: 5
   permissions:
     actions: write # Start the publish workflow

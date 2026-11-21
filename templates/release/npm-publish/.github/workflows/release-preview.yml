@@ -31,7 +31,7 @@ jobs:
   preview:
     # Dependabot's runs get a read-only token, which can't comment.
     if: ${{ github.actor != 'dependabot[bot]' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: write # For semantic-release's push check (git push --dry-run); nothing is pushed

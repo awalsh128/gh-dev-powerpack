@@ -15,7 +15,7 @@ jobs:
   analyze:
     # Fork PRs do not have permission to upload security events.
     if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: read
       contents: read

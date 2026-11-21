@@ -18,7 +18,7 @@ permissions:
 jobs:
   check-branch:
     name: Check branch
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Require staging as the base branch
@@ -32,7 +32,7 @@ jobs:
 
   dependency-review:
     name: Dependency review
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Checkout repository
