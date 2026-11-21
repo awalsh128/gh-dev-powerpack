@@ -97,9 +97,10 @@ npm generates provenance automatically when a public package is published from a
 
 ## Release Candidates
 
-Add a last job to `ci.yml` that starts a release candidate after every other job passes on `staging`. It
-starts `publish.yml` on its own instead of calling it, because npm trusts `publish.yml` only when it is the
-top-level workflow:
+`nightly.yml` starts a candidate each night when `staging` has shippable changes (edit `SHIPPABLE_PATHS` and
+`TAG_PATTERN` in it). To cut one after every push to `staging` instead, add a last job to `ci.yml` that starts
+a release candidate after every other job passes. It starts `publish.yml` on its own instead of calling it,
+because npm trusts `publish.yml` only when it is the top-level workflow:
 
 ```yaml
 release-candidate:

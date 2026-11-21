@@ -9,25 +9,36 @@
   },
   "release": {
     "release-flow": {
-      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `publish.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`",
-      "needs": ["common", "npm-publish"]
+      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `publish.yml`, a `pr.yml` that requires `staging` as the base branch and runs dependency review, plus rulesets for `main`, `staging` and release tags; the `staging` ruleset requires the checks `test` (from the `node` set's `ci.yml`), `Check branch`, `Dependency review` and `pr-title`, so supply a `ci.yml` with a `test` job if you don't use `node`",
+      "needs": [
+        "common",
+        "conventional-commits",
+        "npm-publish"
+      ]
     },
     "npm-publish": {
-      "summary": "`publish.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment)",
-      "needs": ["node", "release-flow"]
+      "summary": "`publish.yml`, `nightly.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` (nightly, when it has shippable changes) and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment)",
+      "needs": [
+        "node",
+        "release-flow"
+      ]
     },
     "npm-pages": {
       "summary": "`typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases",
-      "needs": ["npm-publish"]
+      "needs": [
+        "npm-publish"
+      ]
     },
     "vscode-extension": {
       "summary": "`publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks)",
-      "needs": ["node"]
+      "needs": [
+        "node"
+      ]
     }
   },
   "languages": {
     "node": {
-      "summary": "Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations, a `.lintstagedrc.json` and `.husky/pre-commit` that format staged files; add `prettier`, `husky`, `lint-staged` and `format`/`format:check` scripts to `package.json` yourself, and run `npm run format:check` in CI)"
+      "summary": "Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), a `ci.yml` (npm audit by risk, format check, build, typecheck, test, pack), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations, a `.lintstagedrc.json` and `.husky/pre-commit` that format staged files; add `prettier`, `husky`, `lint-staged` and `build`, `typecheck`, `format` and `format:check` scripts to `package.json` yourself)"
     },
     "cpp": {
       "summary": "`.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files"
@@ -45,7 +56,9 @@
     },
     "agentic-powerpack": {
       "summary": "Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`, and a `dev-powerpack-exemplars` skill that adds one tool or config to the repo by adapting this one's matching template",
-      "needs": ["agentic"]
+      "needs": [
+        "agentic"
+      ]
     }
   }
 }

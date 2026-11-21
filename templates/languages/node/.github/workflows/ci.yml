@@ -1,0 +1,92 @@
+name: CI
+
+# Builds, tests and audits on every push to main and staging, every pull request, nightly and by hand.
+#
+# - The workflow must stay named ci.yml: .github/actions/require-ci-success (common set) looks it up by file
+#   name, and promote.yml and publish.yml refuse to release a commit whose latest CI run didn't succeed.
+# - Expects `build`, `typecheck`, `test` and `format:check` scripts in package.json. Delete the steps for
+#   scripts the project doesn't have, and add `lint`, docs or coverage steps if it does.
+# - The job is named `test`, and rulesets/staging.json (release-flow set) requires a check with that name.
+#   Rename them together.
+# - Needs the `vulnerability` and `test` labels (common set) for the audit issues.
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+  schedule:
+    - cron: "0 18 * * *" # Catches newly disclosed advisories on main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Supersede running PR checks; any other run gets its own group, so none is cancelled or dropped.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write # Audit findings are reported as issues
+      pull-requests: write # and as PR comments
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      # Runtime dependencies ship to users, so any advisory fails the build.
+      - name: Audit runtime dependencies
+        uses: oke-py/npm-audit-action@da53d502b06a0bc95f9ce3c0ebab0c4c713fae4a # v5.5.2
+        with:
+          production_flag: true
+          audit_level: low
+          github_token: ${{ github.token }}
+          create_pr_comments: true
+          create_issues: true
+          issue_title: npm audit found vulnerabilities in runtime dependencies
+          issue_labels: vulnerability,test
+          dedupe_issues: true
+
+      # Development tools never ship, so moderate advisories are reported without failing.
+      - name: Report development dependency advisories
+        uses: oke-py/npm-audit-action@da53d502b06a0bc95f9ce3c0ebab0c4c713fae4a # v5.5.2
+        with:
+          audit_level: moderate
+          fail_on_vulnerabilities: false
+          github_token: ${{ github.token }}
+          create_pr_comments: true
+          create_issues: true
+          issue_labels: vulnerability,test
+          dedupe_issues: true
+
+      # Release tools run with publishing credentials, so high and critical advisories still fail.
+      - name: Audit all dependencies for high severity
+        uses: oke-py/npm-audit-action@da53d502b06a0bc95f9ce3c0ebab0c4c713fae4a # v5.5.2
+        with:
+          audit_level: high
+          github_token: ${{ github.token }}
+          create_pr_comments: false
+          create_issues: false
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      # Catches packaging regressions, such as missing dist files, before a release. Add --workspaces for a
+      # monorepo, and delete the step if the project isn't published to npm.
+      - name: Pack
+        run: npm pack --dry-run

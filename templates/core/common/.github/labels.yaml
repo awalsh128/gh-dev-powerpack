@@ -67,3 +67,6 @@
 - name: vulnerability
   color: "#b60205"
   description: Security vulnerability in a dependency
+- name: test
+  color: "#fbca04"
+  description: Reported by a test or audit job

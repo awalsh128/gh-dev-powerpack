@@ -103,6 +103,9 @@ scripts/apply_rulesets.sh -a "$(gh api /apps/octo-sts --jq .id)"
 
 ## CI
 
-`ci.yml` must run on pushes to `staging` and `main`, and on pull requests. To cut npm release candidates, add
-a last job that starts `publish.yml` on `staging` pushes; see
+The `node` set's `ci.yml` runs on pushes to `staging` and `main`, on pull requests and nightly, and its job is
+named `test`, as `staging.json` requires. Any other CI must be a `ci.yml` with a `test` job, because
+`require-ci-success` looks it up by that file name. `pr.yml` (`release-flow`) adds the `Check branch` and
+`Dependency review` checks, and Commit Lint (`conventional-commits`) the `pr-title` check. `nightly.yml`
+(`npm-publish`) starts a release candidate on `staging` each night when it has shippable changes; see
 [npm-publishing.md](npm-publishing.md#release-candidates).
