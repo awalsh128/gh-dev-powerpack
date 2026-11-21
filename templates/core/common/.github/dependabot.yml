@@ -4,9 +4,15 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
-    directory: /
+    directories:
+      - "/"
+      - "/.github/actions/*"
+    # With the release-flow set, add `target-branch: staging`: pull requests target staging, not main.
     schedule:
       interval: weekly
+    # Skip releases younger than a week, giving a compromised release time to be caught.
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ci
     groups:

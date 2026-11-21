@@ -12,6 +12,8 @@
 #
 # Placeholders: __OWNER__, __REPO__ (from the target's origin remote) and __MAINTAINER__
 # (defaults to the owner). Override with OWNER=, REPO= and MAINTAINER= in the environment.
+# __OWNER_ID__ and __REPO_ID__ (numeric GitHub IDs, for Octo STS trust policies) come from `gh api`, so
+# a repo that later takes the same name doesn't match; override with OWNER_ID= and REPO_ID=.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -24,12 +26,12 @@ while getopts "fnh" opt; do
   case "$opt" in
     f) force=true ;;
     n) dry_run=true ;;
-    *) sed -n '2,16p' "$0"; exit 1 ;;
+    *) sed -n '2,18p' "$0"; exit 1 ;;
   esac
 done
 shift $((OPTIND - 1))
 if [[ $# -lt 2 ]]; then
-  sed -n '2,16p' "$0"
+  sed -n '2,18p' "$0"
   echo "Available sets: $(available_sets)"
   exit 1
 fi
@@ -48,6 +50,22 @@ if [[ -z "$OWNER" ]]; then
   exit 1
 fi
 echo "Target: $target ($OWNER/$REPO, maintainer $MAINTAINER)"
+
+# Numeric IDs are only needed by files that use them (Octo STS trust policies). Leave the placeholders
+# in place and warn when gh can't look them up.
+if [[ -z "${OWNER_ID:-}" || -z "${REPO_ID:-}" ]]; then
+  ids="$(gh api "repos/$OWNER/$REPO" --jq '"\(.owner.id) \(.id)"' 2>/dev/null || true)"
+  if [[ -n "$ids" ]]; then
+    OWNER_ID="${OWNER_ID:-${ids% *}}"
+    REPO_ID="${REPO_ID:-${ids#* }}"
+  fi
+fi
+if [[ -z "${OWNER_ID:-}" || -z "${REPO_ID:-}" ]]; then
+  OWNER_ID="__OWNER_ID__"
+  REPO_ID="__REPO_ID__"
+  echo "Warning: could not look up the owner and repo IDs (is $OWNER/$REPO on GitHub and gh logged in?)." >&2
+  echo "         Trust policies keep __OWNER_ID__ and __REPO_ID__; set OWNER_ID= and REPO_ID= and re-run with -f." >&2
+fi
 
 if command -v jq >/dev/null 2>&1; then
   for set in "$@"; do
@@ -83,6 +101,7 @@ for set in "$@"; do
       continue
     fi
     sed -e "s#__OWNER__#$OWNER#g" -e "s#__REPO__#$REPO#g" -e "s#__MAINTAINER__#$MAINTAINER#g" \
+      -e "s#__OWNER_ID__#$OWNER_ID#g" -e "s#__REPO_ID__#$REPO_ID#g" \
       "$file" > "$dest"
     if [[ -x "$file" ]]; then chmod +x "$dest"; fi
   done < <(find "$src" \( -type f -o -type l \) -print0 | sort -z)

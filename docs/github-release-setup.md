@@ -28,8 +28,9 @@ short-lived installation token, as a trust policy in your repository allows. No 
 
 1. Install the [Octo STS app](https://github.com/apps/octo-sts) on the repository (**Only select
    repositories**).
-2. Bootstrap adds the trust policies, with your owner and repository filled in, to the default branch (Octo
-   STS reads them from there):
+2. Bootstrap adds the trust policies, with your owner, repository and their numeric IDs filled in (looked up
+   with `gh api`; pass `OWNER_ID=` and `REPO_ID=` if it can't), to the default branch (Octo STS reads them
+   from there). The IDs mean a repository that later takes the same name doesn't match:
    - `.github/chainguard/release-promote.sts.yaml` (`release-flow`): `promote.yml` on `staging` may get a
      token with `contents: write` to push `main`.
    - `.github/chainguard/release-tag.sts.yaml` (`npm-publish`, `vscode-extension`): the release workflow, in
