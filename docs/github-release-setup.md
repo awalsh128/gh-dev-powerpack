@@ -31,10 +31,10 @@ short-lived installation token, as a trust policy in your repository allows. No 
 2. Bootstrap adds the trust policies, with your owner, repository and their numeric IDs filled in (looked up
    with `gh api`; pass `OWNER_ID=` and `REPO_ID=` if it can't), to the default branch (Octo STS reads them
    from there). The IDs mean a repository that later takes the same name doesn't match:
-   - `.github/chainguard/release-promote.sts.yaml` (`release-flow`): `promote.yml` on `staging` may get a
-     token with `contents: write` to push `main`.
-   - `.github/chainguard/release-tag.sts.yaml` (`npm-publish`, `vscode-extension`): the release workflow, in
-     the `release` environment on `main` or `staging`, may get a token with `contents: write` to push tags.
+   - `.github/chainguard/promote.sts.yaml` (`release-flow`): `promote.yml` on `staging` may get a token with
+     `contents: write` to push `main`.
+   - `.github/chainguard/release.sts.yaml` (`npm-publish`, `vscode-extension`): the release workflow, in the
+     `release` environment on `main` or `staging`, may get a token with `contents: write` to push tags.
 3. Allow the app to bypass the `main` and `tags` rulesets (see [Rulesets](#rulesets)). Its app ID is public:
    `gh api /apps/octo-sts --jq .id` (801323).
 

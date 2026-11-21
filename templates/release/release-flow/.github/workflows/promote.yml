@@ -4,7 +4,7 @@
 #
 # Requires:
 # - The Octo STS GitHub App installed on the repository and allowed to bypass main's ruleset, and the
-#   .github/chainguard/release-promote.sts.yaml trust policy on the default branch. No app key or
+#   .github/chainguard/promote.sts.yaml trust policy on the default branch. No app key or
 #   token is stored. See docs/github-release-setup.md and scripts/apply_rulesets.sh in gh-dev-powerpack.
 # - .github/actions/require-ci-success (from the common template set).
 # - A ci.yml that runs on pushes to staging, and a publish.yml that can be dispatched on main.
@@ -42,7 +42,7 @@ jobs:
         uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
         with:
           scope: ${{ github.repository }}
-          identity: release-promote
+          identity: promote
 
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
