@@ -168,6 +168,32 @@ Registrations can't be edited; delete and recreate one to change it. The workflo
 The workflow requires a successful CI run on the commit. After a partial failure, use **Re-run failed jobs**:
 the commit already carries the tag, and `--skip-duplicate` skips the registry that already has the version.
 
+## README Badges
+
+Once the first real version is on a registry, add its badges to a centered badge row under the README title.
+Replace `<publisher>` and `<name>` with the values from the extension's `package.json`:
+
+```html
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=<publisher>.<name>"
+    ><img src="https://vsmarketplacebadges.dev/version/<publisher>.<name>.svg?label=Version" alt="Version"
+  /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=<publisher>.<name>"
+    ><img
+      src="https://vsmarketplacebadges.dev/downloads/<publisher>.<name>.svg?label=Marketplace%20downloads"
+      alt="Marketplace downloads"
+  /></a>
+  <a href="https://open-vsx.org/extension/<publisher>/<name>"
+    ><img
+      src="https://img.shields.io/open-vsx/dt/<publisher>/<name>?label=Open%20VSX%20downloads"
+      alt="Open VSX downloads"
+  /></a>
+</p>
+```
+
+Drop the Open VSX line if the extension isn't published there. The `create-readme` skill covers the full
+header (logo, title, badge row) and applies the same rule.
+
 ## Troubleshooting
 
 - **Marketplace refuses the token:** a Trusted Publishing policy field doesn't match. The environment must be

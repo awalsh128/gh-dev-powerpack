@@ -153,6 +153,20 @@ comment up to date with
 3. Run **Promote staging to main**. It fast-forwards `main` and starts `release.yml`, which tags `v1.0.0` and
    publishes it to npm.
 
+## README Badges
+
+Once the first real version is published, add the npm version badge to the README badge row. If `ci.yml`
+uploads coverage with `codecov/codecov-action` (the `node` set ships the matching `.codecov.yml`), add the
+Codecov badge too:
+
+```markdown
+[![npm version](https://img.shields.io/npm/v/<package>)](https://www.npmjs.com/package/<package>)
+[![codecov](https://codecov.io/gh/<owner>/<repo>/branch/main/graph/badge.svg)](https://codecov.io/gh/<owner>/<repo>)
+```
+
+The Codecov badge shows "unknown" until the repository is authorized on [Codecov](https://app.codecov.io) and
+has a first upload. The `create-readme` skill applies the same rule.
+
 ## Troubleshooting
 
 - **`E404` or `ENEEDAUTH` on publish:** a trusted publisher field doesn't match. Check the owner, repository,
