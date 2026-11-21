@@ -77,7 +77,7 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 | Set | What it adds |
 | --- | --- |
 | `agentic` | Coding-agent config for Claude Code, Codex, Copilot, Gemini and Antigravity from one source: a short `AGENTS.md` skeleton, five read-only subagent roles generated with rulesync, `delegate` and `progress-notes` skills shared through symlinks, and an Agent Config check workflow. See [Agentic Configuration](docs/agentic-config.md) |
-| `agentic-powerpack` | Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`; needs `agentic` |
+| `agentic-powerpack` | Optional, off by default: a `powerpack-sync` skill that compares the repo with this one's current patterns and proposes updates, with per-set and per-path controls in `.agents/powerpack.json`, and a `dev-powerpack-exemplars` skill that adds one tool or config to the repo by adapting this one's matching template; needs `agentic` |
 
 <!-- sets:end -->
 <!-- prettier-ignore-end -->
