@@ -5,6 +5,6 @@ issuer: https://token.actions.githubusercontent.com
 subject_pattern: "repo:__OWNER__@__OWNER_ID__/__REPO__@__REPO_ID__:.*"
 claim_pattern:
   environment: "release"
-  job_workflow_ref: "__OWNER__/__REPO__/\\.github/workflows/release\\.yml@refs/heads/(main|staging)"
+  job_workflow_ref: "__OWNER__/__REPO__/\\.github/workflows/publish\\.yml@refs/heads/(main|staging)"
 permissions:
   contents: write

@@ -18,7 +18,7 @@ version and semantic-release writes the real one in the CI workspace.
 ./bootstrap.sh ~/repos/my-package common conventional-commits release-flow node npm-publish
 ```
 
-This adds `.github/workflows/release.yml`, `.github/workflows/release-preview.yml`, `release.config.cjs`, the
+This adds `.github/workflows/publish.yml`, `.github/workflows/release-preview.yml`, `release.config.cjs`, the
 `setup` and `require-ci-success` actions, and `promote.yml`. Then complete
 [GitHub Setup for Releases](github-release-setup.md).
 
@@ -35,7 +35,7 @@ In `package.json`:
   `prepack`.
 
 In a monorepo, move `release.config.cjs` into the package's directory, give `tagFormat` a package prefix (such
-as `my-lib-v${version}`), and set `PACKAGE_DIR` in `release.yml`. Only commits that change that directory then
+as `my-lib-v${version}`), and set `PACKAGE_DIR` in `publish.yml`. Only commits that change that directory then
 count, through [semantic-release-monorepo](https://github.com/pmowrer/semantic-release-monorepo).
 
 For API docs on GitHub Pages, add the `npm-pages` set; see [github-pages.md](github-pages.md).
@@ -67,7 +67,7 @@ It:
    because npm only configures trusted publishing on an existing package. It is public and deprecated by
    default. With `-p`, it is private (`--access restricted`), which needs a scoped name and a paid npm plan;
    make the package public before the first release with `npm access set status=public <name>`.
-4. Registers the trusted publisher with `npm trust github`, for `release.yml` and the `release` environment
+4. Registers the trusted publisher with `npm trust github`, for `publish.yml` and the `release` environment
    (change them with `-w` and `-e`). npm asks for two-factor authentication.
 
 semantic-release's first release is then `1.0.0`. To do the same by hand, publish the placeholder and fill in
@@ -83,7 +83,7 @@ the form below.
    | -------------------- | ---------------------------------- |
    | Organization or user | The repository owner               |
    | Repository           | The repository name                |
-   | Workflow filename    | `release.yml` (the file name only) |
+   | Workflow filename    | `publish.yml` (the file name only) |
    | Environment name     | `release`                          |
    | Allowed actions      | Allow `npm publish`                |
 
@@ -97,27 +97,28 @@ npm generates provenance automatically when a public package is published from a
 
 ## Release Candidates
 
-Add a last job to `ci.yml` that releases a candidate after every other job passes on `staging`:
+Add a last job to `ci.yml` that starts a release candidate after every other job passes on `staging`. It
+starts `publish.yml` on its own instead of calling it, because npm trusts `publish.yml` only when it is the
+top-level workflow:
 
 ```yaml
 release-candidate:
   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/staging' }}
   needs: [lint, test] # every other CI job
+  runs-on: ubuntu-latest
+  timeout-minutes: 5
   permissions:
-    actions: read
-    contents: write
-    issues: write
-    pull-requests: write
-    id-token: write
-    pages: write
-  uses: ./.github/workflows/release.yml
+    actions: write # Start the publish workflow
+  steps:
+    - name: Start release candidate
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh workflow run publish.yml --ref staging
 ```
 
-The caller must grant every permission `release.yml` asks for, including `pages: write` for the API docs job
-([github-pages.md](github-pages.md)), even though candidates never deploy.
-
-npm trusts `release.yml` only when it is the top-level workflow, which a call from `ci.yml` is not, and
-`release.config.cjs` only publishes on `main` anyway.
+Never call `publish.yml` with `uses:` from another workflow: a called workflow isn't the top-level one, so npm
+trusted publishing and the Octo STS trust policy (which names the workflow file) wouldn't match it. Candidates
+aren't published to npm anyway: `release.config.cjs` only publishes on `main`.
 
 ## Release Preview
 
@@ -139,18 +140,18 @@ comment up to date with
   Nothing is pushed, and the rulesets still protect `staging`, `main` and the release tags.
 - Pull requests from forks get a preview too. Dependabot's get a read-only token, so the preview skips them.
 - A change to `release-preview.yml` or `release.config.cjs` shows up in previews once it is on `staging`.
-- Keep its `PACKAGE_DIR` and pinned versions in step with `release.yml`.
+- Keep its `PACKAGE_DIR` and pinned versions in step with `publish.yml`.
 
 ## Verify
 
 1. Preview the next version without tagging:
 
    ```bash
-   gh workflow run release.yml --ref staging -f dry-run=true
+   gh workflow run publish.yml --ref staging -f dry-run=true
    ```
 
 2. Merge a `feat:` or `fix:` pull request into `staging`; CI releases `1.0.0-rc.1`.
-3. Run **Promote staging to main**. It fast-forwards `main` and starts `release.yml`, which tags `v1.0.0` and
+3. Run **Promote staging to main**. It fast-forwards `main` and starts `publish.yml`, which tags `v1.0.0` and
    publishes it to npm.
 
 ## README Badges

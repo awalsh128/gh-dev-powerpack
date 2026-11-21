@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: true # Only the latest push's preview matters
 
 env:
-  # Keep in step with PACKAGE_DIR and the pinned tool versions in release.yml.
+  # Keep in step with PACKAGE_DIR and the pinned tool versions in publish.yml.
   PACKAGE_DIR: "."
 
 jobs:

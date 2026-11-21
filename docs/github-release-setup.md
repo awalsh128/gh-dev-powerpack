@@ -64,7 +64,7 @@ publishing will fail. Release notes and the pre-release flag stay editable.
 
 ## Release Switch
 
-`release.yml` runs its job only when the repository variable `RELEASES_ENABLED` is not `false`, and a dry run
+`publish.yml` runs its job only when the repository variable `RELEASES_ENABLED` is not `false`, and a dry run
 always runs. Every route to a release (a `staging` push, `promote.yml`, a manual run) goes through that job,
 so one variable holds them all. Hold releases while a repository settles with
 `gh variable set RELEASES_ENABLED --body false`, and release again with `--body true` (or delete the
@@ -104,5 +104,5 @@ scripts/apply_rulesets.sh -a "$(gh api /apps/octo-sts --jq .id)"
 ## CI
 
 `ci.yml` must run on pushes to `staging` and `main`, and on pull requests. To cut npm release candidates, add
-a last job that calls `release.yml` on `staging` pushes; see
+a last job that starts `publish.yml` on `staging` pushes; see
 [npm-publishing.md](npm-publishing.md#release-candidates).

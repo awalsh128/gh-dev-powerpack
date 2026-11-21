@@ -9,11 +9,11 @@
   },
   "release": {
     "release-flow": {
-      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`",
+      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `publish.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`",
       "needs": ["common", "npm-publish"]
     },
     "npm-publish": {
-      "summary": "`release.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment)",
+      "summary": "`publish.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment)",
       "needs": ["node", "release-flow"]
     },
     "npm-pages": {

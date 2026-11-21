@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Sets up GitHub Pages for the API docs that the npm-publish set's release.yml deploys (npm-pages
+# Sets up GitHub Pages for the API docs that the npm-publish set's publish.yml deploys (npm-pages
 # set): turns on Pages with GitHub Actions as the source, limits the github-pages environment to
-# main (release.yml deploys from main, and the release flow makes staging the default branch, which
+# main (publish.yml deploys from main, and the release flow makes staging the default branch, which
 # is all GitHub allows by default), and sets the repository's website to the Pages URL. Safe to
 # rerun: steps already done are skipped.
 #

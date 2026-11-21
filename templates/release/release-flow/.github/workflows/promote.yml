@@ -7,7 +7,7 @@
 #   .github/chainguard/release-promote.sts.yaml trust policy on the default branch. No app key or
 #   token is stored. See docs/github-release-setup.md and scripts/apply_rulesets.sh in gh-dev-powerpack.
 # - .github/actions/require-ci-success (from the common template set).
-# - A ci.yml that runs on pushes to staging, and a release.yml that can be dispatched on main.
+# - A ci.yml that runs on pushes to staging, and a publish.yml that can be dispatched on main.
 name: Promote staging to main
 
 on:
@@ -105,4 +105,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
-        run: gh workflow run release.yml --ref main
+        run: gh workflow run publish.yml --ref main
