@@ -36,8 +36,10 @@ If the repo already has an `AGENTS.md` or `CLAUDE.md`, bootstrap keeps it. In th
 
 ## Optional: sync with the powerpack
 
-The `agentic-powerpack` set adds a `powerpack-sync` skill that compares your repo with the current patterns in
-this repo and proposes updates. It needs `agentic` and is off until you turn it on.
+The `agentic-powerpack` set adds two skills. `powerpack-sync` compares your repo with the current patterns in
+this repo and proposes updates. `dev-powerpack-exemplars` adds one tool, config or CI piece (Prettier, CodeQL,
+the release flow and so on) by adapting the matching template to your repo instead of copying a whole set. The
+set needs `agentic`, and `powerpack-sync` is off until you turn it on.
 
 ```bash
 ./bootstrap.sh ~/repos/my-project agentic agentic-powerpack
