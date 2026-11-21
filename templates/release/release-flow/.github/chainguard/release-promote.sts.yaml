@@ -1,8 +1,9 @@
 # Octo STS trust policy: lets promote.yml, run on staging, get a short-lived token that can push to
 # main. The Octo STS app must be a bypass actor on main's ruleset (scripts/apply_rulesets.sh -a).
 issuer: https://token.actions.githubusercontent.com
-subject: repo:__OWNER__/__REPO__:ref:refs/heads/staging
+subject_pattern: "repo:__OWNER__@__OWNER_ID__/__REPO__@__REPO_ID__:.*"
 claim_pattern:
-  job_workflow_ref: __OWNER__/__REPO__/.github/workflows/promote.yml@refs/heads/staging
+  ref: "refs/heads/staging"
+  job_workflow_ref: "__OWNER__/__REPO__/\\.github/workflows/promote\\.yml@refs/heads/staging"
 permissions:
   contents: write

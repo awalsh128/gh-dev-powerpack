@@ -2,8 +2,9 @@
 # short-lived token that can push release tags. The 'release' environment only allows main and
 # staging.
 issuer: https://token.actions.githubusercontent.com
-subject: repo:__OWNER__/__REPO__:environment:release
+subject_pattern: "repo:__OWNER__@__OWNER_ID__/__REPO__@__REPO_ID__:.*"
 claim_pattern:
-  job_workflow_ref: __OWNER__/__REPO__/.github/workflows/publish-extension.yml@refs/heads/(main|staging)
+  environment: "release"
+  job_workflow_ref: "__OWNER__/__REPO__/\\.github/workflows/publish-extension\\.yml@refs/heads/(main|staging)"
 permissions:
   contents: write

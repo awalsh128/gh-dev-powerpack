@@ -1,13 +1,12 @@
 name: Commit Lint
 
-# The commit-msg hook can be skipped locally, so check every PR commit and the PR title too
-# (squash merges use the PR title as the commit message).
+# The commit-msg hook can be skipped locally, so check the PR title too. Squash merges use the PR title as
+# the commit message, so it is the one that counts; per-commit linting would prove nothing.
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
 
 permissions:
-  contents: read
   pull-requests: read
 
 # A new push to a PR supersedes its running checks; other runs are never cancelled.
@@ -16,16 +15,6 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  commits:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      # Uses commitlint.config.mjs, falling back to config-conventional when it is missing.
-      - name: Lint commit messages
-        uses: wagoid/commitlint-github-action@b948419dd99f3fd78a6548d48f94e3df7f6bf3ed # v6.2.1
-
   pr-title:
     runs-on: ubuntu-latest
     steps:

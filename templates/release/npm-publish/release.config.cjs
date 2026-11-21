@@ -32,7 +32,7 @@ const config = {
     ["@semantic-release/commit-analyzer", { preset: "conventionalcommits" }],
     ["@semantic-release/release-notes-generator", { preset: "conventionalcommits" }],
     // Only main publishes. npm trusts release.yml when it is started on its own (promote.yml or a
-    // manual run), not when ci.yml calls it for a candidate.
+    // manual run), not when another workflow calls it.
     ["@semantic-release/npm", { npmPublish: process.env.GITHUB_REF === "refs/heads/main" }],
     // Reports the released version (and the docs directory, when built) as release.yml step
     // outputs; dry runs and runs that release nothing set neither. The docs build runs after
