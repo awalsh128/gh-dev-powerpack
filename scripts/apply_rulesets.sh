@@ -3,8 +3,8 @@
 #
 # Usage: apply_rulesets.sh [-r owner/repo] [-a octo_sts_app_id] [ruleset.json ...]
 #   -r  Target repo (default: the current directory's GitHub repo).
-#   -a  Octo STS GitHub App ID (801323) allowed to bypass the "main" ruleset, so the promote
-#       workflow can push to it.
+#   -a  Octo STS GitHub App ID (801323) allowed to bypass the "main" and "tags" rulesets, so the
+#       promote workflow can push to main and the release workflow can create tags.
 set -euo pipefail
 
 repo=""
@@ -13,7 +13,7 @@ while getopts "r:a:h" opt; do
   case "$opt" in
     r) repo="$OPTARG" ;;
     a) app_id="$OPTARG" ;;
-    *) sed -n '2,7p' "$0"; exit 1 ;;
+    *) sed -n '2,8p' "$0"; exit 1 ;;
   esac
 done
 shift $((OPTIND - 1))
@@ -24,7 +24,7 @@ files=("$@")
 for file in "${files[@]}"; do
   name="$(jq -r .name "$file")"
   body="$(cat "$file")"
-  if [[ "$name" == "main" && -n "$app_id" ]]; then
+  if [[ ("$name" == "main" || "$name" == "tags") && -n "$app_id" ]]; then
     body="$(jq --argjson id "$app_id" \
       '.bypass_actors = [{actor_id: $id, actor_type: "Integration", bypass_mode: "always"}]' <<<"$body")"
   fi

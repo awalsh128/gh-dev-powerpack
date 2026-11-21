@@ -9,7 +9,7 @@
   },
   "release": {
     "release-flow": {
-      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus branch rulesets for `main` and `staging`; you also supply a `ci.yml` that runs on pushes to `staging`",
+      "summary": "`promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `release.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`",
       "needs": ["common", "npm-publish"]
     },
     "npm-publish": {

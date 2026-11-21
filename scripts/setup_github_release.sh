@@ -80,7 +80,7 @@ if [[ "$policies" -eq 0 ]]; then
   echo "No .github/chainguard/*.sts.yaml here. Bootstrap the release sets first."
 fi
 
-step "Rulesets (Octo STS app $app_id may bypass main)"
+step "Rulesets (Octo STS app $app_id may bypass main and tags)"
 if [[ -d .github/rulesets ]]; then
   if "$dry_run"; then
     echo "+ $here/apply_rulesets.sh -r $repo -a $app_id"

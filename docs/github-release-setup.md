@@ -35,7 +35,7 @@ short-lived installation token, as a trust policy in your repository allows. No 
      token with `contents: write` to push `main`.
    - `.github/chainguard/release-tag.sts.yaml` (`npm-publish`, `vscode-extension`): the release workflow, in
      the `release` environment on `main` or `staging`, may get a token with `contents: write` to push tags.
-3. Allow the app to bypass `main`'s ruleset (see [Rulesets](#rulesets)). Its app ID is public:
+3. Allow the app to bypass the `main` and `tags` rulesets (see [Rulesets](#rulesets)). Its app ID is public:
    `gh api /apps/octo-sts --jq .id` (801323).
 
 ## Release Environment
@@ -92,8 +92,10 @@ For a public repository, also:
 
 ## Rulesets
 
-`release-flow` adds `.github/rulesets/main.json` and `staging.json`. Edit the required status check names in
-`staging.json` to match your CI job names, then apply them with the Octo STS app allowed to bypass `main`:
+`release-flow` adds `.github/rulesets/main.json`, `staging.json` and `tags.json`. `tags.json` stops anyone
+creating, moving or deleting a tag, so only the Octo STS app (the release workflow) can tag a release. Edit
+the required status check names in `staging.json` to match your CI job names, then apply them with the Octo
+STS app allowed to bypass `main` and `tags`:
 
 ```bash
 scripts/apply_rulesets.sh -a "$(gh api /apps/octo-sts --jq .id)"
