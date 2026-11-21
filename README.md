@@ -58,8 +58,8 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `publish.yml`, plus rulesets for `main`, `staging` and release tags; you also supply a `ci.yml` that runs on pushes to `staging`; needs `common`, `npm-publish` |
-| `npm-publish` | `publish.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment); needs `node`, `release-flow` |
+| `release-flow` | `promote.yml` that fast-forwards `main` to `staging` after CI passes and starts `publish.yml`, a `pr.yml` that requires `staging` as the base branch and runs dependency review, plus rulesets for `main`, `staging` and release tags; the `staging` ruleset requires the checks `test` (from the `node` set's `ci.yml`), `Check branch`, `Dependency review` and `pr-title`, so supply a `ci.yml` with a `test` job if you don't use `node`; needs `common`, `conventional-commits`, `npm-publish` |
+| `npm-publish` | `publish.yml`, `nightly.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` (nightly, when it has shippable changes) and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment); needs `node`, `release-flow` |
 | `npm-pages` | `typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases; needs `npm-publish` |
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks); needs `node` |
 
@@ -67,7 +67,7 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 
 | Set | What it adds |
 | --- | --- |
-| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations, a `.lintstagedrc.json` and `.husky/pre-commit` that format staged files; add `prettier`, `husky`, `lint-staged` and `format`/`format:check` scripts to `package.json` yourself, and run `npm run format:check` in CI) |
+| `node` | Dev container for Node 24, a Codecov config, a `setup` composite action (Node 24, `npm ci`, optional `--ignore-scripts`), a `ci.yml` (npm audit by risk, format check, build, typecheck, test, pack), and a slim Prettier setup (`.prettierrc.json` at 110 columns, `.prettierignore`, format-on-save `.vscode` settings and extension recommendations, a `.lintstagedrc.json` and `.husky/pre-commit` that format staged files; add `prettier`, `husky`, `lint-staged` and `build`, `typecheck`, `format` and `format:check` scripts to `package.json` yourself) |
 | `cpp` | `.clang-format`, `.clang-tidy`, pre-commit config, and a format check workflow (jidicula/clang-format-action, clang-format 22) that fails on unformatted files |
 | `dotnet` | Full `.editorconfig` with .NET and C# code style rules |
 | `rust` | `rustfmt.toml` and a Rust workflow with `fmt`, `clippy` and `test` jobs (stable toolchain from the runner's rustup, warnings denied, `--locked`). Needs a committed `Cargo.lock` |
@@ -90,7 +90,9 @@ After bootstrapping, edit:
 - `codeql.yml`: the language matrix (for Rust, add `language: rust` with `build-mode: none`).
 - `dependabot.yml`: uncomment the package ecosystem block (`cargo` for Rust).
 - `labels.yaml`: add project-specific labels.
-- `rulesets/staging.json`: the required status check names must match your CI job names.
+- `rulesets/staging.json`: the required status check names (`test`, `Check branch`, `Dependency review`,
+  `pr-title`) must match your CI job names. They match the `node` set's `ci.yml` and the `release-flow` and
+  `conventional-commits` workflows.
 - `AGENTS.md`: replace the `TODO`s with the repo's commands, conventions and warnings.
 
 ## Publishing guides
