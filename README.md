@@ -1,24 +1,44 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" alt="gh-dev-powerpack logo" width="128" height="128">
+  <img src="docs/assets/logo.svg" alt="GitHub Dev Powerpack logo" width="128" height="128">
 </p>
 
-# GitHub Dev Powerpack
+<h1 align="center">GitHub Dev Powerpack</h1>
 
-Powerpack for developing code and managing CI/CD (GitHub currently). This repo has generic helper code and
-templates to quickly bootstrap new projects and to raise the quality of existing ones.
+<p align="center">
+  Templates and helper scripts to bootstrap and harden GitHub repos.
+</p>
+
+<p align="center">
+  <a href="https://github.com/awalsh128/gh-dev-powerpack/actions/workflows/format.yml"><img src="https://github.com/awalsh128/gh-dev-powerpack/actions/workflows/format.yml/badge.svg?branch=main" alt="Format"></a>
+  <a href="https://github.com/awalsh128/gh-dev-powerpack/actions/workflows/docs-check.yml"><img src="https://github.com/awalsh128/gh-dev-powerpack/actions/workflows/docs-check.yml/badge.svg?branch=main" alt="Docs Check"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/awalsh128/gh-dev-powerpack" alt="License"></a>
+</p>
+
+Powerpack for developing code and managing CI/CD on GitHub. This repo has generic helper code and templates to
+quickly bootstrap new projects and to raise the quality of existing ones. Install it as a
+[`gh` extension](https://cli.github.com/manual/gh_extension) or run `bootstrap.sh` directly.
 
 - 🚀 **Bootstrap**: one command copies composable template sets into a new or existing repo.
-- 🧰 **Repo hygiene**: issue forms, PR template, labels, triage, CodeQL and Dependabot for pinned actions.
-- ✍️ **Conventional commits**: commitlint, a husky hook and PR checks for commits and titles.
+- 🧰 **Repo hygiene**: issue forms, PR template, labels, triage, CodeQL, Dependabot and conventional commits.
 - 📦 **Release flow**: `staging` to `main` promotion with rulesets, plus semantic-release for npm and VS Code
-  extensions.
-- 📚 **API docs**: TypeDoc built and deployed to GitHub Pages on official releases.
+  extensions, and TypeDoc API docs on GitHub Pages.
 - 🧹 **Language tooling**: C++, .NET, Node and Rust formatting, linting and CI.
 - 🤖 **Agentic config**: one source of coding-agent config for Claude Code, Codex, Copilot, Gemini and
   Antigravity.
-- 🔒 **Safer installs**: `safe_fetch_exec.sh` checks a SHA-256 before running a downloaded script.
 
-## Bootstrap a repo
+<!-- prettier-ignore -->
+<p align="center">
+  <a href="https://github.com/sponsors/awalsh128"><img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-db61a2?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor awalsh128"></a>
+</p>
+
+<p align="center">
+  Free and open source, and kept up by one person.<br />
+  If it saves you time, <a href="https://github.com/sponsors/awalsh128">sponsor it monthly</a> or
+  <a href="https://github.com/sponsors/awalsh128?frequency=one-time">leave a small one-time tip</a>. Every bit
+  helps.
+</p>
+
+## Quick Start
 
 ```bash
 ./bootstrap.sh -n ~/repos/my-project common conventional-commits   # dry run
