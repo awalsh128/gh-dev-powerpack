@@ -27,7 +27,7 @@ findings=$(
   unpinned_uses | while IFS=: read -r file line ref; do
     jq -n --arg path "$file" --arg line "$line" --arg ref "$ref" '{
       rule: "unpinned-uses", category: "pin", path: $path, line: ($line | tonumber), ref: $ref, fixable: true,
-      message: "pin \($ref) to a full commit SHA (line \($line))"}'
+      message: "pin \($ref) to a full commit SHA"}'
   done | jq -s '.'
 )
 
