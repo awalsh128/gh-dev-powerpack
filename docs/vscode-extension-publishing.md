@@ -21,6 +21,13 @@ the bump from [Conventional Commits](https://www.conventionalcommits.org/):
 A release run refuses `feat` commits after a release, since it would have to skip an odd minor; publish them
 as a pre-release first. Releases create a `vX.Y.Z` tag and a GitHub release with the VSIX, and never commit.
 
+Breaking commits always bump the major version by default. To keep a young project from reaching 2.0.0 by
+accident, turn on the cap in `release.config.cjs` with
+`[path.join(__dirname, "scripts/vscode-release/release-version.mts"), { requireAllowMajor: true }]`. Breaking
+commits then count as features, so they can go out as a pre-release first, until a run sets the `ALLOW_MAJOR`
+environment variable to `true` or `1`. The workflow that runs semantic-release has to pass `ALLOW_MAJOR`
+through, for example from a `workflow_dispatch` input.
+
 ## Bootstrap
 
 ```bash
