@@ -17,6 +17,8 @@ module.exports = {
   tagFormat: "v${version}",
   plugins: [
     // Replaces @semantic-release/commit-analyzer. Node.js 24 loads it without a build step.
+    // To stop breaking commits bumping the major version unless ALLOW_MAJOR is set, pass
+    // { requireAllowMajor: true } as the second element of a [path, options] pair.
     path.join(__dirname, "scripts/vscode-release/release-version.mts"),
     ["@semantic-release/release-notes-generator", { preset: "conventionalcommits" }],
     // Sets the version and packages the VSIX for the GitHub release; publishing happens after.
