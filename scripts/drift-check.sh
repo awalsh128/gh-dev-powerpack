@@ -7,7 +7,9 @@
 # Needs jq.
 #
 # Rules:
-#   unpinned-uses  (category pin)  a `uses:` in a workflow or composite action that is not a full commit SHA.
+#   unpinned-uses    (category pin)  a `uses:` in a workflow or composite action that is not a full commit SHA.
+#   unpinned-runner  (category pin)  a job's `runs-on: ubuntu-latest`; the standard is ubuntu-24.04. Only a plain
+#                                    string is flagged, not a matrix value, an expression or a list.
 set -euo pipefail
 
 # Prints "file:line:ref-owner/name@ref" for each remote `uses:` whose ref is not a 40-character SHA.
@@ -23,12 +25,27 @@ unpinned_uses() {
     grep -vE '@[0-9a-f]{40}$' || true
 }
 
+# Prints "file:line" for each `runs-on: ubuntu-latest` written as a plain string (quotes and a comment allowed).
+unpinned_runner() {
+  [[ -d .github/workflows ]] || return 0
+  find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) | sort |
+    xargs -r grep -HnE '^\s*runs-on:\s*["'"'"']?ubuntu-latest["'"'"']?\s*(#.*)?$' |
+    sed -E 's/^([^:]+):([0-9]+):.*$/\1:\2/' || true
+}
+
 findings=$(
-  unpinned_uses | while IFS=: read -r file line ref; do
-    jq -n --arg path "$file" --arg line "$line" --arg ref "$ref" '{
-      rule: "unpinned-uses", category: "pin", path: $path, line: ($line | tonumber), ref: $ref, fixable: true,
-      message: "pin \($ref) to a full commit SHA"}'
-  done | jq -s '.'
+  {
+    unpinned_uses | while IFS=: read -r file line ref; do
+      jq -n --arg path "$file" --arg line "$line" --arg ref "$ref" '{
+        rule: "unpinned-uses", category: "pin", path: $path, line: ($line | tonumber), ref: $ref, fixable: true,
+        message: "pin \($ref) to a full commit SHA"}'
+    done
+    unpinned_runner | while IFS=: read -r file line; do
+      jq -n --arg path "$file" --arg line "$line" '{
+        rule: "unpinned-runner", category: "pin", path: $path, line: ($line | tonumber), ref: "ubuntu-latest",
+        fixable: true, message: "pin runs-on ubuntu-latest to ubuntu-24.04"}'
+    done
+  } | jq -s '.'
 )
 
 jq -n --argjson findings "${findings:-[]}" '{findings: $findings}'
