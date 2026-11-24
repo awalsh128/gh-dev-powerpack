@@ -34,6 +34,9 @@
       "needs": [
         "node"
       ]
+    },
+    "repo-settings-sync": {
+      "summary": "`scripts/repo-settings/gh-sync.mts`: downloads a repository's settings, rulesets, Actions variables and tags to tracked JSON files under `.github/` and uploads them back (`--dry-run` to preview), using `gh`; add `repo:*` scripts to `package.json` to call it"
     }
   },
   "languages": {

@@ -82,6 +82,7 @@ Sets live in `templates/<category>/<set>`; pass just the set name to `bootstrap.
 | `npm-publish` | `publish.yml`, `nightly.yml`, `release-preview.yml` and `release.config.cjs`: semantic-release cuts `-rc` candidates on `staging` (nightly, when it has shippable changes) and publishes official releases from `main` to npm with trusted publishing, and comments on each pull request with the release it would cut (cycjimmy/semantic-release-action, marocchino/sticky-pull-request-comment); needs `node`, `release-flow` |
 | `npm-pages` | `typedoc.json`: the `npm-publish` release builds TypeDoc API docs and deploys them to GitHub Pages on official releases; needs `npm-publish` |
 | `vscode-extension` | `publish-extension.yml`, `release.config.cjs` and `scripts/vscode-release/release-version.mts`: semantic-release with VS Code's even/odd pre-release versions, publishing to the Marketplace and Open VSX with trusted publishing, and a `vsce-demos` skill for recording demo videos (add `agentic` for its symlinks); needs `node` |
+| `repo-settings-sync` | `scripts/repo-settings/gh-sync.mts`: downloads a repository's settings, rulesets, Actions variables and tags to tracked JSON files under `.github/` and uploads them back (`--dry-run` to preview), using `gh`; add `repo:*` scripts to `package.json` to call it |
 
 ### `languages`
 
