@@ -3,7 +3,7 @@
 # for the cross-repo-drift skill (set DRIFT_CHECK_CMD to this script's path).
 #
 # Usage: drift-check.sh        (run it inside the repo to check)
-# Prints {"findings": [{"rule", "category", "path", "message", "fixable"}]}. Always exits 0 when it ran.
+# Prints {"findings": [{"rule", "category", "path", "message", "fixable"}]}, plus "line" and "ref" where known. Always exits 0 when it ran.
 # Needs jq.
 #
 # Rules:
@@ -26,7 +26,7 @@ unpinned_uses() {
 findings=$(
   unpinned_uses | while IFS=: read -r file line ref; do
     jq -n --arg path "$file" --arg line "$line" --arg ref "$ref" '{
-      rule: "unpinned-uses", category: "pin", path: $path, fixable: true,
+      rule: "unpinned-uses", category: "pin", path: $path, line: ($line | tonumber), ref: $ref, fixable: true,
       message: "pin \($ref) to a full commit SHA (line \($line))"}'
   done | jq -s '.'
 )
